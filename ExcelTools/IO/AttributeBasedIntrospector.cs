@@ -39,7 +39,7 @@ namespace ExcelTools.IO
         {
             return parentType.GetProperties()
                 .Where(prop => Attribute.IsDefined(prop, typeof(Include)))
-                .Select(prop => prop.PropertyType)
+                .Select(included => included.PropertyType)
                 .ToList();
         }
     }
