@@ -6,12 +6,12 @@ using ExcelTools.Meta.Worksheet;
 
 namespace ExcelTools.IO
 {
-    public class TypeAnalyzer
+    public class AttributeBasedIntrospector : ITypeIntrospector
     {
         private readonly Type _rootType;
         private readonly List<PropertyInfo> _columns;
 
-        public TypeAnalyzer(Type rootType)
+        public AttributeBasedIntrospector(Type rootType)
         {
             _rootType = rootType;
             _columns = new List<PropertyInfo>();
@@ -23,13 +23,10 @@ namespace ExcelTools.IO
             return _columns;
         }
 
-        private void Traverse(Type rowType)
+        private void Traverse(Type currentType)
         {
-            _columns.AddRange(GetColumns(rowType));
-            GetNestedColumns(rowType)
-                .Select(prop => prop.PropertyType)
-                .ToList()
-                .ForEach(Traverse);
+            _columns.AddRange(GetColumns(currentType));
+            GetNestedColumnsTypes(currentType).ForEach(Traverse);
         }
 
         private static IEnumerable<PropertyInfo> GetColumns(Type rowType)
@@ -38,10 +35,12 @@ namespace ExcelTools.IO
                 .Where(prop => Attribute.IsDefined(prop, typeof(Column)));
         }
 
-        private static IEnumerable<PropertyInfo> GetNestedColumns(Type rowType)
+        private static List<Type> GetNestedColumnsTypes(Type parentType)
         {
-            return rowType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Include)));
+            return parentType.GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(Include)))
+                .Select(prop => prop.PropertyType)
+                .ToList();
         }
     }
 }

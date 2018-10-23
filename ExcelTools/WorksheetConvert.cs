@@ -7,7 +7,7 @@ namespace ExcelTools
     {
         public static string SerializeObject<T>(List<T> value)
         {
-            var analyzer = new TypeAnalyzer(typeof(T));
+            ITypeIntrospector analyzer = new AttributeBasedIntrospector(typeof(T));
             analyzer.Analyze();
 
             return string.Empty;

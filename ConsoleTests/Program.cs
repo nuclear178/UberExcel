@@ -18,7 +18,7 @@ namespace ConsoleTests
 
             Console.WriteLine(fuelsWorksheet);
 
-            var analyzer = new TypeAnalyzer(typeof(Fuel));
+            var analyzer = new AttributeBasedIntrospector(typeof(Fuel));
             Console.WriteLine($"Columns number: {analyzer.Analyze().Count}");
         }
     }
