@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExcelTools;
+using ExcelTools.IO;
 
 namespace ConsoleTests
 {
@@ -16,6 +17,9 @@ namespace ConsoleTests
             string fuelsWorksheet = WorksheetConvert.SerializeObject(fuels);
 
             Console.WriteLine(fuelsWorksheet);
+
+            var analyzer = new TypeAnalyzer(typeof(Fuel));
+            Console.WriteLine($"Columns number: {analyzer.Analyze().Count}");
         }
     }
 }

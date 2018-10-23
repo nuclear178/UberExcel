@@ -27,7 +27,7 @@ namespace ExcelTools.IO
         {
             _columns.AddRange(GetColumns(rowType));
             GetNestedColumns(rowType)
-                .Select(prop => prop.GetType())
+                .Select(prop => prop.PropertyType)
                 .ToList()
                 .ForEach(Traverse);
         }
@@ -35,17 +35,13 @@ namespace ExcelTools.IO
         private static IEnumerable<PropertyInfo> GetColumns(Type rowType)
         {
             return rowType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Column)))
-                .Where(prop => prop.GetType().IsValueType)
-                .ToList();
+                .Where(prop => Attribute.IsDefined(prop, typeof(Column)));
         }
 
         private static IEnumerable<PropertyInfo> GetNestedColumns(Type rowType)
         {
             return rowType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Include)))
-                .Where(prop => prop.GetType().IsClass)
-                .ToList();
+                .Where(prop => Attribute.IsDefined(prop, typeof(Include)));
         }
     }
 }
