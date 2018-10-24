@@ -17,16 +17,17 @@ namespace ExcelTools.IO
             _columns = new List<PropertyInfo>();
         }
 
-        public List<PropertyInfo> Analyze()
+        public ObjectSchema Analyze()
         {
             Traverse(_rootType);
-            return _columns;
+            return new ObjectSchema(_columns);
         }
 
         private void Traverse(Type currentType)
         {
             _columns.AddRange(GetColumns(currentType));
-            GetNestedColumnsTypes(currentType).ForEach(Traverse);
+            GetNestedColumnsTypes(currentType)
+                .ForEach(Traverse);
         }
 
         private static IEnumerable<PropertyInfo> GetColumns(Type rowType)

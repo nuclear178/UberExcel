@@ -3,17 +3,28 @@ using ExcelTools.IO;
 
 namespace ExcelTools
 {
-    public static class WorksheetConvert
+    public class WorksheetConvert<T> where T : new()
     {
-        public static string SerializeObject<T>(List<T> value)
+        public static WorksheetConvert<T> BuildAttributeBased()
         {
-            ITypeIntrospector analyzer = new AttributeBasedIntrospector(typeof(T));
-            analyzer.Analyze();
+            return new WorksheetConvert<T>(new AttributeBasedIntrospector(typeof(T)));
+        }
+
+        private readonly ObjectSchema _objectSchema;
+
+        private WorksheetConvert(ITypeIntrospector typeIntrospector)
+        {
+            _objectSchema = typeIntrospector.Analyze();
+        }
+
+        public string SerializeObject(List<T> rows)
+        {
+            var objectBuilder = new ObjectBuilder<T>(_objectSchema);
 
             return string.Empty;
         }
 
-        public static IEnumerable<T> DeserializeObject<T>()
+        public IEnumerable<T> DeserializeObject()
         {
             return new List<T>();
         }
