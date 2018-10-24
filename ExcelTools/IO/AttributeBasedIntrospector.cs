@@ -29,15 +29,21 @@ namespace ExcelTools.IO
         {
             GetColumns(currentType).ForEach(currentColumn =>
             {
-                var columnMeta = currentColumn.GetCustomAttribute<Column>();
-                _mapping.Add(
-                    columnIndex: columnMeta.ColumnIndex,
+                var columnOptions = currentColumn.GetCustomAttribute<Column>();
+                _mapping.AddColumn(
+                    columnIndex: columnOptions.ColumnIndex,
                     columnName: currentColumn.Name,
                     parentName: parentObj?.Name);
             });
-            GetNestedColumns(currentType).ForEach(included =>
+
+            GetIncludedColumns(currentType).ForEach(included =>
             {
-                _mapping.Include(included.Name, parentObj?.Name);
+                var includingOptions = included.GetCustomAttribute<Include>();
+                _mapping.Include(
+                    offset: includingOptions.Offset,
+                    name: included.Name,
+                    parentName: parentObj?.Name);
+
                 Traverse(currentType: included.PropertyType, parentObj: included);
             });
         }
@@ -49,7 +55,7 @@ namespace ExcelTools.IO
                 .ToList();
         }
 
-        private static List<PropertyInfo> GetNestedColumns(Type parentType)
+        private static List<PropertyInfo> GetIncludedColumns(Type parentType)
         {
             return parentType.GetProperties()
                 .Where(prop => Attribute.IsDefined(prop, typeof(Include)))

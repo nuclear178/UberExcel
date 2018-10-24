@@ -20,7 +20,6 @@ namespace ExcelTools.IO
                 object value = cells[rowIndex, columnIndex].Value;
             }
 
-
             return obj;
         }
     }

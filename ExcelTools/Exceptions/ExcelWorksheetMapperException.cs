@@ -10,15 +10,13 @@ namespace ExcelTools.Exceptions
         {
         }
 
-        public static ExcelWorksheetMapperException ColumnIndexAlreadyExists(int index, string alreadyContainedName)
+        public static ExcelWorksheetMapperException ColumnIndexAlreadyExists(
+            string addedColumn,
+            int index,
+            string alreadyContainedName)
         {
             return new ExcelWorksheetMapperException(
-                $"Column with specified index [{index}] already exists and contains column with name {alreadyContainedName}");
-        }
-
-        public static ExcelWorksheetMapperException ColumnNotFound(int columnIndex)
-        {
-            return new ExcelWorksheetMapperException($"Column with specified index [{columnIndex}] is not found");
+                $"Failed to add column with name [{addedColumn}]: column with specified index [{index}] already exists and contains column with name [{alreadyContainedName}]");
         }
     }
 }

@@ -4,7 +4,7 @@ namespace ConsoleTests
 {
     public class Bucket
     {
-        [Column(5)] public int Prop1 { get; set; }
-        [Include()] public Name Prop2 { get; set; }
+        [Column(1)] public int Prop1 { get; set; }
+        [Include(1)] public Name Prop2 { get; set; }
     }
 }

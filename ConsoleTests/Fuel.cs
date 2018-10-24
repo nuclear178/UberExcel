@@ -8,6 +8,6 @@ namespace ConsoleTests
 
         [Column(ColumnIndex = 2)] public int Volume { get; set; }
 
-        [Include] public Bucket Bucket { get; set; }
+        [Include(2)] public Bucket Bucket { get; set; }
     }
 }
