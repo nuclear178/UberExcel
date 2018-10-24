@@ -47,5 +47,56 @@ namespace ConsoleTests
 
             return obj;
         }
+        
+        /*Console.WriteLine("::");
+
+            foreach (var keyValuePair in _columns)
+            {
+                Console.WriteLine($"[{keyValuePair.Key}]: {keyValuePair.Value}");
+            }
+
+            Console.WriteLine("::");
+            _includings.Values.ToList().ForEach(Console.WriteLine);*/
+        
+        /*private class Checker<T>
+        {
+            private readonly Checker<T> _next;
+            private readonly Predicate<T> _rule;
+
+            public Checker(Predicate<T> rule, Checker<T> next = null)
+            {
+                _rule = rule;
+                _next = next;
+            }
+
+            public bool Check(T entity)
+            {
+                if (_rule(entity)) return true;
+                return _next == null || _next.Check(entity);
+            }
+        }
+
+        class Entity
+        {
+            public int Term { get; set; }
+        }
+
+        private static class Rules
+        {
+            public static Predicate<Entity> TermChecker()
+            {
+                return e => e.Term > 10;
+            }
+        }
+
+        private class AntiFraudService
+        {
+            private readonly Checker<Entity> _validator;
+
+            public AntiFraudService()
+            {
+                _validator = new Checker<Entity>(Rules.TermChecker());
+            }
+        }*/
     }
 }

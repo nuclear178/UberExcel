@@ -1,23 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 
 namespace ExcelTools.IO
 {
     public class ObjectSchema : IEnumerable<RowObject>
     {
-        private readonly List<PropertyInfo> _columnsInfo;
-        private readonly IEnumerable<RowObject> _rowObjects = new List<RowObject>();
+        private readonly IEnumerable<RowObject> _rowObjects;
 
-        public ObjectSchema(List<PropertyInfo> columnsInfo)
+        public ObjectSchema(IEnumerable<RowObject> rowObjects)
         {
-            _columnsInfo = columnsInfo;
+            _rowObjects = rowObjects;
         }
 
-        public int ColumnMin => new Random().Next(0, 9);
+        public int ColumnMin => _rowObjects.Select(rowObj => rowObj.ColumnIndex).Min();
 
-        public int ColumnMax => new Random().Next(0, 9);
+        public int ColumnMax => _rowObjects.Select(rowObj => rowObj.ColumnIndex).Max();
 
         public IEnumerator<RowObject> GetEnumerator()
         {

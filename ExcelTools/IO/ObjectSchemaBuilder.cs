@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ExcelTools.Exceptions;
 
 namespace ExcelTools.IO
@@ -18,17 +17,9 @@ namespace ExcelTools.IO
 
         public ObjectSchema Build()
         {
-            /*Console.WriteLine("::");
-            
-            foreach (var keyValuePair in _columns)
-            {
-                Console.WriteLine($"[{keyValuePair.Key}]: {keyValuePair.Value}");
-            }
-
-            Console.WriteLine("::");
-            _includings.Values.ToList().ForEach(Console.WriteLine);*/
-
-            return new ObjectSchema(new List<PropertyInfo>()); // todo map to real
+            return new ObjectSchema(
+                _columns.Select(pair => new RowObject(pair.Key, pair.Value))
+            );
         }
 
         public void AddColumn(int columnIndex, string columnName, string parentName = null)
@@ -78,7 +69,7 @@ namespace ExcelTools.IO
         private int ApplyOffset(string parentName, int columnIndex)
         {
             var offset = _includings.Values
-                .FirstOrDefault(including => including.Name.EndsWith(parentName))?.Offset;
+                .SingleOrDefault(including => including.Name.EndsWith(parentName))?.Offset;
 
             if (!offset.HasValue) return columnIndex;
 
