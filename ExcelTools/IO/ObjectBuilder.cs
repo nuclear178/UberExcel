@@ -1,3 +1,5 @@
+using OfficeOpenXml;
+
 namespace ExcelTools.IO
 {
     public class ObjectBuilder<T> where T : new()
@@ -9,9 +11,17 @@ namespace ExcelTools.IO
             _schema = schema;
         }
 
-        public T Build()
+        public T Build(ExcelRange cells, int rowIndex)
         {
-            return new T();
+            var obj = new T();
+            foreach (RowObject rowData in _schema)
+            {
+                int columnIndex = rowData.ColumnIndex;
+                object value = cells[rowIndex, columnIndex].Value;
+            }
+
+
+            return obj;
         }
     }
 }

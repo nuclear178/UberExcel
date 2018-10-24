@@ -9,38 +9,49 @@ namespace ExcelTools.IO
     public class AttributeBasedIntrospector : ITypeIntrospector
     {
         private readonly Type _rootType;
-        private readonly List<PropertyInfo> _columns;
+        private readonly ObjectSchemaBuilder _mapping;
 
         public AttributeBasedIntrospector(Type rootType)
         {
             _rootType = rootType;
-            _columns = new List<PropertyInfo>();
+            _mapping = new ObjectSchemaBuilder();
         }
 
         public ObjectSchema Analyze()
         {
             Traverse(_rootType);
-            return new ObjectSchema(_columns);
+
+            return _mapping.Build();
         }
 
-        private void Traverse(Type currentType)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        private void Traverse(Type currentType, PropertyInfo parentObj = null)
         {
-            _columns.AddRange(GetColumns(currentType));
-            GetNestedColumnsTypes(currentType)
-                .ForEach(Traverse);
+            GetColumns(currentType).ForEach(currentColumn =>
+            {
+                var columnMeta = currentColumn.GetCustomAttribute<Column>();
+                _mapping.Add(
+                    columnIndex: columnMeta.ColumnIndex,
+                    columnName: currentColumn.Name,
+                    parentName: parentObj?.Name);
+            });
+            GetNestedColumns(currentType).ForEach(included =>
+            {
+                Traverse(currentType: included.PropertyType, parentObj: included);
+            });
         }
 
-        private static IEnumerable<PropertyInfo> GetColumns(Type rowType)
+        private static List<PropertyInfo> GetColumns(Type rowType)
         {
             return rowType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Column)));
+                .Where(prop => Attribute.IsDefined(prop, typeof(Column)))
+                .ToList();
         }
 
-        private static List<Type> GetNestedColumnsTypes(Type parentType)
+        private static List<PropertyInfo> GetNestedColumns(Type parentType)
         {
             return parentType.GetProperties()
                 .Where(prop => Attribute.IsDefined(prop, typeof(Include)))
-                .Select(included => included.PropertyType)
                 .ToList();
         }
     }

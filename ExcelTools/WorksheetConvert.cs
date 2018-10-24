@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ExcelTools.IO;
+using OfficeOpenXml;
 
 namespace ExcelTools
 {
@@ -17,15 +18,15 @@ namespace ExcelTools
             _objectSchema = typeIntrospector.Analyze();
         }
 
-        public string SerializeObject(List<T> rows)
+        public void SerializeObject(List<T> rows, ExcelWorksheet worksheet)
+        {
+        }
+
+        public IEnumerable<T> DeserializeObject(ExcelRange worksheet)
         {
             var objectBuilder = new ObjectBuilder<T>(_objectSchema);
 
-            return string.Empty;
-        }
 
-        public IEnumerable<T> DeserializeObject()
-        {
             return new List<T>();
         }
     }
