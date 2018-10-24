@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using ExcelTools;
 using ExcelTools.IO;
-using OfficeOpenXml;
 
 namespace ConsoleTests
 {
@@ -11,11 +8,11 @@ namespace ConsoleTests
     {
         private static void Main()
         {
-            var fuels = new List<Fuel>
+            /*var fuels = new List<Fuel>
             {
                 new Fuel {Type = "Wog", Volume = 5, Name = new Name {First = "row1", Last = "col1"}},
                 new Fuel {Type = "Shell", Volume = 3, Name = new Name {First = "row2", Last = "col2"}}
-            };
+            };*/
             //using (var package = new ExcelPackage())
             //{
             //    var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
@@ -29,10 +26,10 @@ namespace ConsoleTests
             var analyzer = new AttributeBasedIntrospector(typeof(Fuel));
             Console.WriteLine($"Columns number: {analyzer.Analyze()}");
 
-            Fuel fuelItem = fuels[0];
+            /*Fuel fuelItem = fuels[0];
             object val = GetPropValue("Name.First", fuelItem);
 
-            Console.WriteLine(val);
+            Console.WriteLine(val);*/
         }
 
         private static object GetPropValue(string propAddress, object obj)

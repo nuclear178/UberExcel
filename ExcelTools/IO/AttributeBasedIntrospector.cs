@@ -37,6 +37,7 @@ namespace ExcelTools.IO
             });
             GetNestedColumns(currentType).ForEach(included =>
             {
+                _mapping.Include(included.Name, parentObj?.Name);
                 Traverse(currentType: included.PropertyType, parentObj: included);
             });
         }
