@@ -14,10 +14,9 @@ namespace ExcelTools.IO
         public T Build(ExcelRange cells, int rowIndex)
         {
             var obj = new T();
-            foreach (ColumnOptions rowData in _schema)
+            foreach (ColumnOptions column in _schema)
             {
-                int columnIndex = rowData.ColumnIndex;
-                object value = cells[rowIndex, columnIndex].Value;
+                int columnIndex = column.Index;
             }
 
             return obj;

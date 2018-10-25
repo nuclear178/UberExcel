@@ -13,9 +13,9 @@ namespace ExcelTools.IO
             _rowObjects = rowObjects;
         }
 
-        public int ColumnMin => _rowObjects.Select(rowObj => rowObj.ColumnIndex).Min();
+        public int ColumnMin => _rowObjects.Select(rowObj => rowObj.Index).Min();
 
-        public int ColumnMax => _rowObjects.Select(rowObj => rowObj.ColumnIndex).Max();
+        public int ColumnMax => _rowObjects.Select(rowObj => rowObj.Index).Max();
 
         public IEnumerator<ColumnOptions> GetEnumerator()
         {

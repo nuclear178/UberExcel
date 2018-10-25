@@ -18,8 +18,21 @@ namespace ExcelTools
             _objectSchema = typeIntrospector.Analyze();
         }
 
-        public void SerializeObject(List<T> rows, ExcelWorksheet worksheet)
+        public void SerializeObject(List<T> objects, ExcelWorksheet worksheet, int fromRowIndex = 1)
         {
+            var builder = new WorksheetRowBuilder(_objectSchema);
+
+            int currentIndex = fromRowIndex;
+            objects.ForEach(rowObj =>
+            {
+                builder.Build(worksheet.Cells[
+                    FromRow: fromRowIndex,
+                    FromCol: fromRowIndex + 1,
+                    ToRow: _objectSchema.ColumnMin,
+                    ToCol: _objectSchema.ColumnMax
+                ], currentIndex, rowObj);
+                currentIndex++;
+            });
         }
 
         public IEnumerable<T> DeserializeObject(ExcelRange worksheet)

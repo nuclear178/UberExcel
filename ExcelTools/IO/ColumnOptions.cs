@@ -2,13 +2,13 @@ namespace ExcelTools.IO
 {
     public class ColumnOptions
     {
-        public ColumnOptions(int columnIndex, string name)
+        public ColumnOptions(int index, string fullName)
         {
-            ColumnIndex = columnIndex;
-            Name = name;
+            Index = index;
+            FullName = fullName;
         }
 
-        public int ColumnIndex { get; }
-        public string Name { get; }
+        public int Index { get; }
+        public string FullName { get; }
     }
 }

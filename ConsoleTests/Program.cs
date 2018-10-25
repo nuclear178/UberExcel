@@ -19,7 +19,7 @@ namespace ConsoleTests
             //    ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
             //    convert.SerializeObject(fuels, fuelsWorksheet);
 
-             //   Console.WriteLine(fuelsWorksheet);
+            //   Console.WriteLine(fuelsWorksheet);
             //}
 
 
@@ -47,7 +47,7 @@ namespace ConsoleTests
 
             return obj;
         }
-        
+
         /*Console.WriteLine("::");
 
             foreach (var keyValuePair in _columns)
@@ -57,7 +57,7 @@ namespace ConsoleTests
 
             Console.WriteLine("::");
             _includings.Values.ToList().ForEach(Console.WriteLine);*/
-        
+
         /*private class Checker<T>
         {
             private readonly Checker<T> _next;
