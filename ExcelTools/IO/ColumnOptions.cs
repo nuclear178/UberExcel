@@ -1,8 +1,8 @@
 namespace ExcelTools.IO
 {
-    public class RowObject
+    public class ColumnOptions
     {
-        public RowObject(int columnIndex, string name)
+        public ColumnOptions(int columnIndex, string name)
         {
             ColumnIndex = columnIndex;
             Name = name;

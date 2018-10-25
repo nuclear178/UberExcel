@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace ExcelTools.IO
 {
-    public class ObjectSchema : IEnumerable<RowObject>
+    public class ObjectSchema : IEnumerable<ColumnOptions>
     {
-        private readonly IEnumerable<RowObject> _rowObjects;
+        private readonly IEnumerable<ColumnOptions> _rowObjects;
 
-        public ObjectSchema(IEnumerable<RowObject> rowObjects)
+        public ObjectSchema(IEnumerable<ColumnOptions> rowObjects)
         {
             _rowObjects = rowObjects;
         }
@@ -17,7 +17,7 @@ namespace ExcelTools.IO
 
         public int ColumnMax => _rowObjects.Select(rowObj => rowObj.ColumnIndex).Max();
 
-        public IEnumerator<RowObject> GetEnumerator()
+        public IEnumerator<ColumnOptions> GetEnumerator()
         {
             return _rowObjects.GetEnumerator();
         }

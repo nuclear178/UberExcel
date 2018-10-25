@@ -18,13 +18,13 @@ namespace ExcelTools.IO
         public ObjectSchema Build()
         {
             return new ObjectSchema(
-                _columns.Select(pair => new RowObject(pair.Key, pair.Value))
+                _columns.Select(pair => new ColumnOptions(pair.Key, pair.Value))
             );
         }
 
         public void AddColumn(int columnIndex, string columnName, string parentName = null)
         {
-            columnIndex = parentName == null ? columnIndex : ApplyOffset(parentName, columnIndex);
+            columnIndex = parentName == null ? columnIndex : GetColumnWithOffset(parentName, columnIndex);
             if (_columns.ContainsKey(columnIndex))
                 throw ExcelWorksheetMapperException.ColumnIndexAlreadyExists(
                     addedColumn: columnName,
@@ -66,7 +66,7 @@ namespace ExcelTools.IO
             return $"{oldName}.{columnName}";
         }
 
-        private int ApplyOffset(string parentName, int columnIndex)
+        private int GetColumnWithOffset(string parentName, int columnIndex)
         {
             var offset = _includings.Values
                 .SingleOrDefault(including => including.Name.EndsWith(parentName))?.Offset;
