@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using ExcelTools.IO;
-using OfficeOpenXml;
+using ExcelTools.Introspection;
 
 namespace ConsoleTests
 {
@@ -33,7 +30,7 @@ namespace ConsoleTests
 
             Console.WriteLine(val);*/
 
-            var fuels = new List<Fuel>
+            /*var fuels = new List<Fuel>
             {
                 new Fuel
                 {
@@ -74,7 +71,42 @@ namespace ConsoleTests
                 convert.SerializeObject(fuels, fuelsWorksheet);
 
                 package.Save();
+            }*/
+
+            var fuel = new Fuel();
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.First", fuel, "f");
+            ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.Last", fuel, "l");
+
+            ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.First", fuel, "v");
+
+            watch.Stop();
+
+            var elapsedMs = watch.ElapsedMilliseconds;
+
+            Console.WriteLine($"val: {fuel.Bucket.Prop2.First} and {fuel.Bucket.Prop2.Last}");
+
+            Console.WriteLine($"elp: {elapsedMs}");
+
+            /*Activator.CreateInstance(typeof(Name));
+            Activator.CreateInstance(typeof(Bucket));
+            fuel = Activator.CreateInstance<Fuel>();
+
+            Console.WriteLine(fuel);
+
+            Console.WriteLine(fuel.Bucket == null);
+
+            PropertyInfo info = fuel.GetType().GetProperty("Bucket");
+            object value = info.GetValue(fuel, null);
+
+            if (value == null)
+            {
+                object propObj = Activator.CreateInstance(info.PropertyType);
+                info.SetValue(fuel, propObj, null);
             }
+
+            Console.WriteLine(fuel.Bucket == null);*/
         }
 
         /*private static object GetPropValue(string propAddress, object obj)
@@ -140,6 +172,10 @@ namespace ConsoleTests
             {
                 _validator = new Checker<Entity>(Rules.TermChecker());
             }
+        }*/
+
+        /*private void InstantiateWithIncludings(object obj) //todo separate depp instantiation 
+        {
         }*/
     }
 }

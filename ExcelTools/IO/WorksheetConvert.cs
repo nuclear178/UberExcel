@@ -35,9 +35,9 @@ namespace ExcelTools.IO
             });
         }
 
-        public IEnumerable<T> DeserializeObject(ExcelRange worksheet)
+        public IEnumerable<T> DeserializeObject(ExcelWorksheet worksheet, int fromRowIndex = 1)
         {
-            var objectBuilder = new ObjectBuilder<T>(_objectSchema);
+            var builder = new ObjectBuilder<T>(_objectSchema);
 
 
             return new List<T>();

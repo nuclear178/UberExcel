@@ -14,7 +14,7 @@ namespace ExcelTools.Introspection
         public AttributeBasedIntrospector(Type rootType)
         {
             _rootType = rootType;
-            _mapping = new ObjectSchemaBuilder();
+            _mapping = new ObjectSchemaBuilder(rootType);
         }
 
         public ObjectSchema Analyze()

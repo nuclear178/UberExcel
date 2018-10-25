@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,12 @@ namespace ExcelTools.Introspection
     public class ObjectSchema : IEnumerable<ColumnOptions>
     {
         private readonly IEnumerable<ColumnOptions> _rowObjects;
+        private Type Type { get; }
 
-        public ObjectSchema(IEnumerable<ColumnOptions> rowObjects)
+        public ObjectSchema(IEnumerable<ColumnOptions> rowObjects, Type type)
         {
             _rowObjects = rowObjects;
+            Type = type;
         }
 
         public int ColumnMin => _rowObjects.Select(rowObj => rowObj.Index).Min();

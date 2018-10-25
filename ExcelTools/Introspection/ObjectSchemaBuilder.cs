@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExcelTools.Exceptions;
@@ -8,9 +9,11 @@ namespace ExcelTools.Introspection
     {
         private readonly Dictionary<int, string> _columns;
         private readonly Dictionary<string, Including> _includings;
+        private readonly Type _type;
 
-        public ObjectSchemaBuilder()
+        public ObjectSchemaBuilder(Type type)
         {
+            _type = type;
             _columns = new Dictionary<int, string>();
             _includings = new Dictionary<string, Including>();
         }
@@ -18,7 +21,8 @@ namespace ExcelTools.Introspection
         public ObjectSchema Build()
         {
             return new ObjectSchema(
-                _columns.Select(pair => new ColumnOptions(pair.Key, pair.Value))
+                _columns.Select(pair => new ColumnOptions(pair.Key, pair.Value)),
+                _type
             );
         }
 
@@ -91,6 +95,10 @@ namespace ExcelTools.Introspection
             {
                 return $"{nameof(Name)}: {Name}, {nameof(Offset)}: {Offset}";
             }
+        }
+
+        private class Column
+        {
         }
     }
 }
