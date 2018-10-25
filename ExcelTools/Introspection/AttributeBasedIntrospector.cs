@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using ExcelTools.Meta.Worksheet;
 
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class AttributeBasedIntrospector : ITypeIntrospector
     {

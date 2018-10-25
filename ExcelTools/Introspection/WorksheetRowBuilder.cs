@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using OfficeOpenXml;
 
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class WorksheetRowBuilder
     {

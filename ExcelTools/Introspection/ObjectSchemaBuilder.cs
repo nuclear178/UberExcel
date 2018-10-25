@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExcelTools.Exceptions;
 
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class ObjectSchemaBuilder
     {

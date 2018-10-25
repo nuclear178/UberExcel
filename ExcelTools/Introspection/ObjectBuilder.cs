@@ -1,6 +1,6 @@
 using OfficeOpenXml;
 
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class ObjectBuilder<T> where T : new()
     {

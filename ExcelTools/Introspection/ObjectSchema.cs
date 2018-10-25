@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class ObjectSchema : IEnumerable<ColumnOptions>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ExcelTools;
+using ExcelTools.IO;
 using OfficeOpenXml;
 
 namespace ConsoleTests

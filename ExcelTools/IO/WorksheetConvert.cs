@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using ExcelTools.IO;
+using ExcelTools.Introspection;
 using OfficeOpenXml;
 
-namespace ExcelTools
+namespace ExcelTools.IO
 {
     public class WorksheetConvert<T> where T : new()
     {

@@ -1,4 +1,4 @@
-namespace ExcelTools.IO
+namespace ExcelTools.Introspection
 {
     public class ColumnOptions
     {
