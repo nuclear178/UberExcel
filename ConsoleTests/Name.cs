@@ -10,5 +10,10 @@ namespace ConsoleTests
         public Name()
         {
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(First)}: {First}, {nameof(Last)}: {Last}";
+        }
     }
 }

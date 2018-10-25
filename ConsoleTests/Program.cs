@@ -1,8 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using ExcelTools.Introspection;
+using ExcelTools.IO;
+using OfficeOpenXml;
 
 namespace ConsoleTests
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     internal static class Program
     {
         private static void Main()
@@ -30,52 +37,10 @@ namespace ConsoleTests
 
             Console.WriteLine(val);*/
 
-            /*var fuels = new List<Fuel>
-            {
-                new Fuel
-                {
-                    Type = "tp1",
-                    Volume = 5,
-                    Bucket = new Bucket
-                    {
-                        Prop1 = 1, Prop2 = new Name
-                        {
-                            First = "fr1",
-                            Last = "ls1"
-                        }
-                    }
-                },
-                new Fuel
-                {
-                    Type = "tp2",
-                    Volume = 7,
-                    Bucket = new Bucket
-                    {
-                        Prop1 = 2, Prop2 = new Name
-                        {
-                            First = "fr5",
-                            Last = "ls7"
-                        }
-                    }
-                }
-            };
-
-            string fileName = "Example-CRM-" + DateTime.Now.ToString("yyyy-MM-dd--hh-mm-ss") + ".xlsx";
-
-            // Create the file using the FileInfo object
-            var file = new FileInfo(fileName);
-            using (var package = new ExcelPackage(file))
-            {
-                var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
-                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("sl");
-                convert.SerializeObject(fuels, fuelsWorksheet);
-
-                package.Save();
-            }*/
 
             var fuel = new Fuel();
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            Stopwatch watch = Stopwatch.StartNew();
             ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.First", fuel, "f");
             ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.Last", fuel, "l");
 
@@ -83,11 +48,22 @@ namespace ConsoleTests
 
             watch.Stop();
 
-            var elapsedMs = watch.ElapsedMilliseconds;
+            long elapsedMs = watch.ElapsedMilliseconds;
 
             Console.WriteLine($"val: {fuel.Bucket.Prop2.First} and {fuel.Bucket.Prop2.Last}");
 
             Console.WriteLine($"elp: {elapsedMs}");
+
+            Console.WriteLine("Opening...");
+
+            watch = Stopwatch.StartNew();
+            OpenExcel();
+
+            watch.Stop();
+            elapsedMs = watch.ElapsedMilliseconds;
+            
+            Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");
+
 
             /*Activator.CreateInstance(typeof(Name));
             Activator.CreateInstance(typeof(Bucket));
@@ -174,8 +150,82 @@ namespace ConsoleTests
             }
         }*/
 
-        /*private void InstantiateWithIncludings(object obj) //todo separate depp instantiation 
+        /*private void InstantiateWithIncludings(object obj) //todo separate deep instantiation 
         {
         }*/
+
+
+        private static void CreateExcel()
+        {
+            var fuels = new List<Fuel>
+            {
+                new Fuel
+                {
+                    Type = "tp1",
+                    Volume = 5,
+                    Bucket = new Bucket
+                    {
+                        Prop1 = 1, Prop2 = new Name
+                        {
+                            First = "fr1",
+                            Last = "ls1"
+                        }
+                    }
+                },
+                new Fuel
+                {
+                    Type = "tp2",
+                    Volume = 7,
+                    Bucket = new Bucket
+                    {
+                        Prop1 = 2, Prop2 = new Name
+                        {
+                            First = "fr5",
+                            Last = "ls7"
+                        }
+                    }
+                }
+            };
+
+            string fileName = "Example-CRM-" + DateTime.Now.ToString("yyyy-MM-dd--hh-mm-ss") + ".xlsx";
+
+            // Create the file using the FileInfo object
+            var file = new FileInfo(fileName);
+            using (var package = new ExcelPackage(file))
+            {
+                var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("sl");
+                convert.SerializeObject(fuels, fuelsWorksheet);
+
+                package.Save();
+            }
+        }
+
+        private static void OpenExcel()
+        {
+            const string fileName = "Example-CRM-2018-10-25--06-16-52.xlsx";
+
+            var file = new FileInfo(fileName);
+            using (var package = new ExcelPackage(file))
+            {
+                var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+
+                if (fuelsWorksheet == null)
+                {
+                    Console.WriteLine("returning....");
+                    return;
+                }
+
+                int totalRows = fuelsWorksheet.Dimension.Rows;
+
+
+                var fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
+                foreach (Fuel fuel in fuels)
+                {
+                    Console.WriteLine(fuel);
+                }
+            }
+        }
     }
 }

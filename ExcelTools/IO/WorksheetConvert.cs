@@ -26,7 +26,7 @@ namespace ExcelTools.IO
             objects.ForEach(rowObj =>
             {
                 builder.Build(worksheet.Cells[
-                    FromRow: fromRowIndex,
+                    FromRow: fromRowIndex, // todo Test with currentColumn; (+1)
                     FromCol: fromRowIndex + 1,
                     ToRow: _objectSchema.ColumnMin,
                     ToCol: _objectSchema.ColumnMax
@@ -35,12 +35,23 @@ namespace ExcelTools.IO
             });
         }
 
-        public IEnumerable<T> DeserializeObject(ExcelWorksheet worksheet, int fromRowIndex = 1)
+        public IEnumerable<T> DeserializeObject(ExcelWorksheet worksheet, int fromRowIndex = 1, int toRowIndex = 1)
         {
             var builder = new ObjectBuilder<T>(_objectSchema);
+            var objects = new List<T>();
+            for (int row = fromRowIndex; row <= toRowIndex; row++)
+            {
+                T builtObj = builder.Build(worksheet.Cells[
+                    FromRow: fromRowIndex,
+                    FromCol: fromRowIndex + 1,
+                    ToRow: _objectSchema.ColumnMin,
+                    ToCol: _objectSchema.ColumnMax
+                ], row);
 
+                objects.Add(builtObj);
+            }
 
-            return new List<T>();
+            return objects;
         }
     }
 }

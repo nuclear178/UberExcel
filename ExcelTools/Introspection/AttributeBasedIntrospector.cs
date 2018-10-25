@@ -33,6 +33,7 @@ namespace ExcelTools.Introspection
                 _mapping.AddColumn(
                     columnIndex: columnOptions.ColumnIndex,
                     columnName: currentColumn.Name,
+                    columnType: currentColumn.PropertyType,
                     parentName: parentObj?.Name);
             });
 

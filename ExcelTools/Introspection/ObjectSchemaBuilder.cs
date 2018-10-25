@@ -7,37 +7,40 @@ namespace ExcelTools.Introspection
 {
     public class ObjectSchemaBuilder
     {
-        private readonly Dictionary<int, string> _columns;
-        private readonly Dictionary<string, Including> _includings;
+        private readonly Dictionary<int, Column> _columns;
+        private readonly Dictionary<string, Including> _includings; // todo ToList
         private readonly Type _type;
 
         public ObjectSchemaBuilder(Type type)
         {
             _type = type;
-            _columns = new Dictionary<int, string>();
+            _columns = new Dictionary<int, Column>();
             _includings = new Dictionary<string, Including>();
         }
 
         public ObjectSchema Build()
         {
             return new ObjectSchema(
-                _columns.Select(pair => new ColumnOptions(pair.Key, pair.Value)),
+                _columns.Values.Select(column => new ColumnOptions(
+                    column.Index,
+                    column.FullName,
+                    column.Type)),
                 _type
             );
         }
 
-        public void AddColumn(int columnIndex, string columnName, string parentName = null)
+        public void AddColumn(int columnIndex, string columnName, Type columnType, string parentName = null)
         {
             columnIndex = parentName == null ? columnIndex : GetColumnWithOffset(parentName, columnIndex);
             if (_columns.ContainsKey(columnIndex))
                 throw ExcelWorksheetMapperException.ColumnIndexAlreadyExists(
                     addedColumn: columnName,
                     index: columnIndex,
-                    alreadyContainedName: _columns[columnIndex]);
+                    alreadyContainedName: _columns[columnIndex].FullName);
 
             columnName = parentName == null ? columnName : IncludeName(parentName, columnName);
 
-            _columns[columnIndex] = columnName;
+            _columns[columnIndex] = new Column(columnIndex, columnName, columnType);
         }
 
         public void Include(int offset, string name, string parentName = null)
@@ -53,7 +56,7 @@ namespace ExcelTools.Introspection
                 return;
             }
 
-            foreach (string includingKey in _includings.Keys)
+            foreach (string includingKey in _includings.Keys) // todo Values
             {
                 if (!_includings[includingKey].Name.EndsWith(parentName))
                     continue;
@@ -90,15 +93,20 @@ namespace ExcelTools.Introspection
                 Name += $".{name}";
                 Offset += offset;
             }
-
-            public override string ToString()
-            {
-                return $"{nameof(Name)}: {Name}, {nameof(Offset)}: {Offset}";
-            }
         }
 
         private class Column
         {
+            public int Index { get; }
+            public string FullName { get; }
+            public Type Type { get; }
+
+            public Column(int index, string fullName, Type type)
+            {
+                Index = index;
+                FullName = fullName;
+                Type = type;
+            }
         }
     }
 }

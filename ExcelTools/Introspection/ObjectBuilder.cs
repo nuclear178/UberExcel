@@ -16,14 +16,14 @@ namespace ExcelTools.Introspection
 
         public T Build(ExcelRange cells, int rowIndex)
         {
-            var obj = new T();
+            var createdObj = new T();
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = cells[rowIndex, column.Index].Value;
-                
+                SetPropValue(column.FullName, createdObj, column.MapValue(rawValue));
             }
 
-            return obj;
+            return createdObj;
         }
 
         public static void SetPropValue(string qualifiedName, object obj, object value)
@@ -49,16 +49,6 @@ namespace ExcelTools.Introspection
             obj.GetType()
                 .GetProperty(parts.Last())
                 .SetValue(obj, value, null);
-        }
-
-        private double ParseDouble(string value)
-        {
-            return double.Parse(value);
-        }
-
-        private static int ParseInt(string value)
-        {
-            return int.Parse(value);
         }
     }
 }
