@@ -8,14 +8,14 @@ namespace ExcelTools.Introspection
     public class ObjectSchemaBuilder
     {
         private readonly Dictionary<int, Column> _columns;
-        private readonly Dictionary<string, Including> _includings; // todo ToList
+        private readonly List<Including> _includings;
         private readonly Type _type;
 
         public ObjectSchemaBuilder(Type type)
         {
             _type = type;
             _columns = new Dictionary<int, Column>();
-            _includings = new Dictionary<string, Including>();
+            _includings = new List<Including>();
         }
 
         public ObjectSchema Build()
@@ -47,7 +47,7 @@ namespace ExcelTools.Introspection
         {
             if (parentName == null)
             {
-                _includings.Add(name, new Including
+                _includings.Add(new Including
                 {
                     Name = name,
                     Offset = offset
@@ -56,18 +56,13 @@ namespace ExcelTools.Introspection
                 return;
             }
 
-            foreach (string includingKey in _includings.Keys) // todo Values
-            {
-                if (!_includings[includingKey].Name.EndsWith(parentName))
-                    continue;
-
-                _includings[includingKey].Append(name, offset);
-            }
+            _includings.SingleOrDefault(incl => incl.Name.EndsWith(parentName))
+                ?.Complete(name, offset);
         }
 
         private string IncludeName(string parentName, string columnName)
         {
-            string oldName = _includings.Values
+            string oldName = _includings
                 .SingleOrDefault(including => including.Name.EndsWith(parentName))?.Name;
 
             return $"{oldName}.{columnName}";
@@ -75,7 +70,7 @@ namespace ExcelTools.Introspection
 
         private int GetColumnWithOffset(string parentName, int columnIndex)
         {
-            var offset = _includings.Values
+            var offset = _includings
                 .SingleOrDefault(including => including.Name.EndsWith(parentName))?.Offset;
 
             if (!offset.HasValue) return columnIndex;
@@ -88,7 +83,7 @@ namespace ExcelTools.Introspection
             public string Name { get; set; }
             public int Offset { get; set; }
 
-            public void Append(string name, int offset)
+            public void Complete(string name, int offset)
             {
                 Name += $".{name}";
                 Offset += offset;
