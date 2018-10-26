@@ -16,7 +16,8 @@ namespace ConsoleTests
 
         public override string ToString()
         {
-            return $"{nameof(Type)}: {Type}, {nameof(Volume)}: {Volume}, {nameof(Bucket)}: {Bucket}";
+            return
+                $"{nameof(Type)}: {Type}, {nameof(Volume)}: {Volume}, {nameof(Bucket)}: {Bucket.ToString() ?? "null"}";
         }
     }
 }

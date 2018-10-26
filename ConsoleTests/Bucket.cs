@@ -13,7 +13,7 @@ namespace ConsoleTests
 
         public override string ToString()
         {
-            return $"{nameof(Prop1)}: {Prop1}, {nameof(Prop2)}: {Prop2}";
+            return $"{nameof(Prop1)}: {Prop1}, {nameof(Prop2)}: {Prop2.ToString() ?? "null"}";
         }
     }
 }
