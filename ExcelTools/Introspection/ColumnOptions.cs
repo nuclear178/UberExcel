@@ -1,54 +1,65 @@
 using System;
+using ExcelTools.Converters;
 using ExcelTools.Exceptions;
 
 namespace ExcelTools.Introspection
 {
     public class ColumnOptions
     {
-        public ColumnOptions(int index, string fullName, Type type)
+        private readonly Type _converterType;
+
+        public ColumnOptions(int index, string fullName, Type type, Type converterType)
         {
             Index = index;
             FullName = fullName;
             Type = type;
+            _converterType = converterType;
         }
 
         public int Index { get; }
         public string FullName { get; }
         private Type Type { get; }
+        private bool HasCustomConverter => _converterType != null;
 
-        public object MapValue(object rawValue)
+        public object MapValueFrom(object rawValue)
         {
+            if (HasCustomConverter)
+                return GetCustomConverter().Read(rawValue.ToString());
+
             if (Type == typeof(string))
-            {
                 return rawValue.ToString();
-            }
 
             if (Type == typeof(short))
-            {
                 return Convert.ToInt16(rawValue);
-            }
 
             if (Type == typeof(int))
-            {
                 return Convert.ToInt32(rawValue);
-            }
 
             if (Type == typeof(long))
-            {
                 return Convert.ToInt64(rawValue);
-            }
 
             if (Type == typeof(double))
-            {
                 return Convert.ToDouble(rawValue);
-            }
 
             if (Type == typeof(decimal))
-            {
                 return Convert.ToDecimal(rawValue);
-            }
 
             throw ExcelWorksheetMapperException.UnsupportedColumnType(typeName: Type.FullName);
+        }
+
+        public object MapValueTo(object rawValue)
+        {
+            return HasCustomConverter
+                ? GetCustomConverter().Write(rawValue)
+                : rawValue;
+        }
+
+        private IConverter GetCustomConverter()
+        {
+            if (!HasCustomConverter)
+                throw new Exception("Custom converter is not defined.");
+
+            return (IConverter) Activator.CreateInstance(_converterType);
         }
     }
 }

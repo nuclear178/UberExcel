@@ -7,9 +7,9 @@ namespace ExcelTools.Introspection
 {
     public class ObjectSchemaBuilder
     {
+        private readonly Type _type;
         private readonly Dictionary<int, Column> _columns;
         private readonly List<Including> _includings;
-        private readonly Type _type;
 
         public ObjectSchemaBuilder(Type type)
         {
@@ -24,23 +24,34 @@ namespace ExcelTools.Introspection
                 _columns.Values.Select(column => new ColumnOptions(
                     column.Index,
                     column.FullName,
-                    column.Type)),
+                    column.Type,
+                    column.ConverterType)),
                 _type
             );
         }
 
-        public void AddColumn(int columnIndex, string columnName, Type columnType, string parentName = null)
+        public void AddColumn(int columnIndex,
+            string columnName,
+            Type columnType,
+            out int addedIndex,
+            string parentName = null)
         {
-            columnIndex = parentName == null ? columnIndex : GetColumnWithOffset(parentName, columnIndex);
+            columnIndex = parentName == null
+                ? columnIndex
+                : GetColumnWithOffset(parentName, columnIndex);
             if (_columns.ContainsKey(columnIndex))
                 throw ExcelWorksheetMapperException.ColumnIndexAlreadyExists(
                     addedColumn: columnName,
                     index: columnIndex,
                     alreadyContainedName: _columns[columnIndex].FullName);
 
-            columnName = parentName == null ? columnName : IncludeName(parentName, columnName);
+            columnName = parentName == null
+                ? columnName
+                : IncludeName(parentName, columnName);
 
             _columns[columnIndex] = new Column(columnIndex, columnName, columnType);
+
+            addedIndex = columnIndex;
         }
 
         public void Include(int offset, string name, string parentName = null)
@@ -60,6 +71,9 @@ namespace ExcelTools.Introspection
                 ?.Complete(name, offset);
         }
 
+        public void AddConverter(int columnIndex, Type converterType) =>
+            _columns[columnIndex].ConverterType = converterType;
+
         private string IncludeName(string parentName, string columnName)
         {
             string oldName = _includings
@@ -78,6 +92,21 @@ namespace ExcelTools.Introspection
             return columnIndex + offset.Value;
         }
 
+        private class Column
+        {
+            public int Index { get; }
+            public string FullName { get; }
+            public Type Type { get; }
+            public Type ConverterType { get; set; }
+
+            public Column(int index, string fullName, Type type)
+            {
+                Index = index;
+                FullName = fullName;
+                Type = type;
+            }
+        }
+
         private class Including
         {
             public string Name { get; set; }
@@ -87,20 +116,6 @@ namespace ExcelTools.Introspection
             {
                 Name += $".{name}";
                 Offset += offset;
-            }
-        }
-
-        private class Column
-        {
-            public int Index { get; }
-            public string FullName { get; }
-            public Type Type { get; }
-
-            public Column(int index, string fullName, Type type)
-            {
-                Index = index;
-                FullName = fullName;
-                Type = type;
             }
         }
     }

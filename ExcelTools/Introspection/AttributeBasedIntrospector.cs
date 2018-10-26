@@ -34,7 +34,17 @@ namespace ExcelTools.Introspection
                     columnIndex: columnOptions.ColumnIndex,
                     columnName: currentColumn.Name,
                     columnType: currentColumn.PropertyType,
-                    parentName: parentObj?.Name);
+                    addedIndex: out int addedIndex,
+                    parentName: parentObj?.Name
+                );
+
+                if (!Attribute.IsDefined(currentColumn, typeof(ConverterAttribute))) return;
+
+                var converterOptions = currentColumn.GetCustomAttribute<ConverterAttribute>();
+                _mapping.AddConverter(
+                    columnIndex: addedIndex,
+                    converterType: converterOptions.ConverterType
+                );
             });
 
             GetIncludedColumns(currentType).ForEach(included =>
@@ -43,7 +53,8 @@ namespace ExcelTools.Introspection
                 _mapping.Include(
                     offset: includingOptions.Offset,
                     name: included.Name,
-                    parentName: parentObj?.Name);
+                    parentName: parentObj?.Name
+                );
 
                 Traverse(currentType: included.PropertyType, parentObj: included);
             });

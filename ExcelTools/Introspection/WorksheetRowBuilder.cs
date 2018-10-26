@@ -18,7 +18,7 @@ namespace ExcelTools.Introspection
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = GetPropValue(column.FullName, obj);
-                cells[rowIndex, column.Index].Value = rawValue;
+                cells[rowIndex, column.Index].Value = column.MapValueTo(rawValue);
             }
         }
 

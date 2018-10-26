@@ -23,13 +23,13 @@ namespace ExcelTools.Introspection
                 SetPropValue(
                     qualifiedName: column.FullName,
                     obj: createdObj,
-                    value: column.MapValue(rawValue));
+                    value: column.MapValueFrom(rawValue));
             }
 
             return createdObj;
         }
 
-        public static void SetPropValue(string qualifiedName, object obj, object value)
+        private static void SetPropValue(string qualifiedName, object obj, object value)
         {
             var parts = qualifiedName.Split('.');
             for (var i = 0; i < parts.Length - 1; i++)

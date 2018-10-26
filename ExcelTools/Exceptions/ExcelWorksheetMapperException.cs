@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using ExcelTools.Converters;
 
 namespace ExcelTools.Exceptions
 {
@@ -22,6 +23,12 @@ namespace ExcelTools.Exceptions
         public static Exception UnsupportedColumnType(string typeName)
         {
             return new ExcelWorksheetMapperException($"Column with type [{typeName}] is not supported.");
+        }
+
+        public static Exception InvalidConverterType(string converterTypeName)
+        {
+            return new ExcelWorksheetMapperException(
+                $"Invalid converter type [{converterTypeName}]: converter must implement {typeof(IConverter).FullName} interface.");
         }
     }
 }

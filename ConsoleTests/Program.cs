@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using ExcelTools.Introspection;
 using ExcelTools.IO;
 using OfficeOpenXml;
 
@@ -38,7 +36,7 @@ namespace ConsoleTests
             Console.WriteLine(val);*/
 
 
-            var fuel = new Fuel();
+            /*var fuel = new Fuel();
 
             Stopwatch watch = Stopwatch.StartNew();
             ObjectBuilder<Fuel>.SetPropValue("Bucket.Prop2.First", fuel, "f");
@@ -62,8 +60,10 @@ namespace ConsoleTests
             watch.Stop();
             elapsedMs = watch.ElapsedMilliseconds;
 
-            Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");
-
+            Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");*/
+            
+            //CreateExcel();
+            OpenExcel();
 
             /*Activator.CreateInstance(typeof(Name));
             Activator.CreateInstance(typeof(Bucket));
@@ -168,6 +168,7 @@ namespace ConsoleTests
                         Prop1 = 1, Prop2 = new Name
                         {
                             First = "fr1",
+                            CreationDate = DateTime.Now,
                             Last = "ls1"
                         }
                     }
@@ -181,6 +182,7 @@ namespace ConsoleTests
                         Prop1 = 2, Prop2 = new Name
                         {
                             First = "fr5",
+                            CreationDate = DateTime.Now,
                             Last = "ls7"
                         }
                     }
@@ -203,7 +205,7 @@ namespace ConsoleTests
 
         private static void OpenExcel()
         {
-            const string fileName = "Example-CRM-2018-10-25--06-16-52.xlsx";
+            const string fileName = "Example-CRM-2018-10-26--05-41-45.xlsx";
 
             var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
