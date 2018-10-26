@@ -61,7 +61,7 @@ namespace ConsoleTests
 
             watch.Stop();
             elapsedMs = watch.ElapsedMilliseconds;
-            
+
             Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");
 
 

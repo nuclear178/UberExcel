@@ -20,7 +20,10 @@ namespace ExcelTools.Introspection
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = cells[rowIndex, column.Index].Value;
-                SetPropValue(column.FullName, createdObj, column.MapValue(rawValue));
+                SetPropValue(
+                    qualifiedName: column.FullName,
+                    obj: createdObj,
+                    value: column.MapValue(rawValue));
             }
 
             return createdObj;

@@ -29,7 +29,7 @@ namespace ExcelTools.Introspection
         {
             GetColumns(currentType).ForEach(currentColumn =>
             {
-                var columnOptions = currentColumn.GetCustomAttribute<Column>();
+                var columnOptions = currentColumn.GetCustomAttribute<ColumnAttribute>();
                 _mapping.AddColumn(
                     columnIndex: columnOptions.ColumnIndex,
                     columnName: currentColumn.Name,
@@ -39,7 +39,7 @@ namespace ExcelTools.Introspection
 
             GetIncludedColumns(currentType).ForEach(included =>
             {
-                var includingOptions = included.GetCustomAttribute<Include>();
+                var includingOptions = included.GetCustomAttribute<IncludeAttribute>();
                 _mapping.Include(
                     offset: includingOptions.Offset,
                     name: included.Name,
@@ -52,14 +52,14 @@ namespace ExcelTools.Introspection
         private static List<PropertyInfo> GetColumns(Type rowType)
         {
             return rowType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Column)))
+                .Where(prop => Attribute.IsDefined(prop, typeof(ColumnAttribute)))
                 .ToList();
         }
 
         private static List<PropertyInfo> GetIncludedColumns(Type parentType)
         {
             return parentType.GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(Include)))
+                .Where(prop => Attribute.IsDefined(prop, typeof(IncludeAttribute)))
                 .ToList();
         }
     }
