@@ -13,11 +13,11 @@ namespace ExcelTools.Exceptions
 
         public static ExcelWorksheetMapperException ColumnIndexAlreadyExists(
             string addedColumn,
-            int index,
+            int columnIndex,
             string alreadyContainedName)
         {
             return new ExcelWorksheetMapperException(
-                $"Failed to add column with name [{addedColumn}]: column with specified index [{index}] already exists and contains column with name [{alreadyContainedName}].");
+                $"Failed to add column with name [{addedColumn}]: column with specified index [{columnIndex}] already exists and contains column with name [{alreadyContainedName}].");
         }
 
         public static Exception UnsupportedColumnType(string typeName)

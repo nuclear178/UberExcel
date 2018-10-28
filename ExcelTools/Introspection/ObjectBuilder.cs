@@ -31,7 +31,7 @@ namespace ExcelTools.Introspection
 
         private static void SetPropValue(string qualifiedName, object obj, object value)
         {
-            var parts = qualifiedName.Split('.');
+            string[] parts = qualifiedName.Split('.');
             for (var i = 0; i < parts.Length - 1; i++)
             {
                 PropertyInfo property = obj.GetType().GetProperty(parts[i]);

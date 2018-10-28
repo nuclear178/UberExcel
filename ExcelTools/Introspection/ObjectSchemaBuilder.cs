@@ -30,7 +30,8 @@ namespace ExcelTools.Introspection
             );
         }
 
-        public void AddColumn(int columnIndex,
+        public void AddColumn(
+            int columnIndex,
             string columnName,
             Type columnType,
             out int addedIndex,
@@ -38,11 +39,11 @@ namespace ExcelTools.Introspection
         {
             columnIndex = parentName == null
                 ? columnIndex
-                : GetColumnWithOffset(parentName, columnIndex);
+                : GetColumnIndexWithOffset(parentName, columnIndex);
             if (_columns.ContainsKey(columnIndex))
                 throw ExcelWorksheetMapperException.ColumnIndexAlreadyExists(
                     addedColumn: columnName,
-                    index: columnIndex,
+                    columnIndex: columnIndex,
                     alreadyContainedName: _columns[columnIndex].FullName);
 
             columnName = parentName == null
@@ -58,17 +59,13 @@ namespace ExcelTools.Introspection
         {
             if (parentName == null)
             {
-                _includings.Add(new Including
-                {
-                    Name = name,
-                    Offset = offset
-                });
-
-                return;
+                _includings.Add(new Including(name, offset));
             }
-
-            _includings.SingleOrDefault(incl => incl.Name.EndsWith(parentName))
-                ?.Complete(name, offset);
+            else
+            {
+                _includings.SingleOrDefault(incl => incl.Name.EndsWith(parentName))
+                    ?.Complete(name, offset);
+            }
         }
 
         public void AddConverter(int columnIndex, Type converterType) =>
@@ -82,9 +79,9 @@ namespace ExcelTools.Introspection
             return $"{oldName}.{columnName}";
         }
 
-        private int GetColumnWithOffset(string parentName, int columnIndex)
+        private int GetColumnIndexWithOffset(string parentName, int columnIndex)
         {
-            var offset = _includings
+            int? offset = _includings
                 .SingleOrDefault(including => including.Name.EndsWith(parentName))?.Offset;
 
             if (!offset.HasValue) return columnIndex;
@@ -109,8 +106,14 @@ namespace ExcelTools.Introspection
 
         private class Including
         {
-            public string Name { get; set; }
-            public int Offset { get; set; }
+            public string Name { get; private set; }
+            public int Offset { get; private set; }
+
+            public Including(string name, int offset)
+            {
+                Name = name;
+                Offset = offset;
+            }
 
             public void Complete(string name, int offset)
             {
