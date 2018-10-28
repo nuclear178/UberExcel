@@ -27,9 +27,9 @@ namespace ExcelTools.IO
             objects.ForEach(rowObj =>
             {
                 builder.Build(worksheet.Cells[
-                    FromRow: fromRowIndex, // todo Test with currentColumn; (+1)
-                    FromCol: fromRowIndex + 1,
-                    ToRow: _objectSchema.ColumnMin,
+                    FromRow: currentIndex,
+                    FromCol: _objectSchema.ColumnMin,
+                    ToRow: currentIndex + 1,
                     ToCol: _objectSchema.ColumnMax
                 ], currentIndex, rowObj);
                 currentIndex++;
@@ -44,9 +44,10 @@ namespace ExcelTools.IO
             {
                 T builtObj = builder.Build(worksheet.Cells[
                     FromRow: fromRowIndex,
-                    FromCol: fromRowIndex + 1,
-                    ToRow: _objectSchema.ColumnMin,
-                    ToCol: _objectSchema.ColumnMax
+                    FromCol: _objectSchema.ColumnMin,
+                    ToRow: fromRowIndex + 1,
+                    ToCol:
+                    _objectSchema.ColumnMax
                 ], rowIndex);
 
                 objects.Add(builtObj);
