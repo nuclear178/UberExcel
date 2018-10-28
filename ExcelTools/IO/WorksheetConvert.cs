@@ -40,14 +40,14 @@ namespace ExcelTools.IO
         {
             var builder = new ObjectBuilder<T>(_objectSchema);
             var objects = new List<T>();
-            for (int row = fromRowIndex; row <= toRowIndex; row++)
+            for (int rowIndex = fromRowIndex; rowIndex <= toRowIndex; rowIndex++)
             {
                 T builtObj = builder.Build(worksheet.Cells[
                     FromRow: fromRowIndex,
                     FromCol: fromRowIndex + 1,
                     ToRow: _objectSchema.ColumnMin,
                     ToCol: _objectSchema.ColumnMax
-                ], row);
+                ], rowIndex);
 
                 objects.Add(builtObj);
             }

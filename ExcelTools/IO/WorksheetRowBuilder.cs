@@ -30,10 +30,10 @@ namespace ExcelTools.IO
                 if (obj == null) return null;
 
                 Type type = obj.GetType();
-                PropertyInfo info = type.GetProperty(part);
-                if (info == null) return null;
+                PropertyInfo property = type.GetProperty(part);
+                if (property == null) return null;
 
-                obj = info.GetValue(obj, null);
+                obj = property.GetValue(obj, null);
             }
 
             return obj;
