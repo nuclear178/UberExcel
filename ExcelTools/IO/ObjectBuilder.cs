@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
-namespace ExcelTools.Introspection
+namespace ExcelTools.IO
 {
     public class ObjectBuilder<T> where T : new()
     {

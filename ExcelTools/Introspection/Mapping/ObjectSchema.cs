@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExcelTools.Introspection
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
+namespace ExcelTools.Introspection.Mapping
 {
     public class ObjectSchema : IEnumerable<ColumnOptions>
     {

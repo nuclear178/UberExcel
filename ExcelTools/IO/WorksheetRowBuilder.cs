@@ -1,8 +1,9 @@
 using System;
 using System.Reflection;
+using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
-namespace ExcelTools.Introspection
+namespace ExcelTools.IO
 {
     public class WorksheetRowBuilder
     {

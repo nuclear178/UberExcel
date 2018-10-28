@@ -2,7 +2,7 @@ using System;
 using ExcelTools.Converters;
 using ExcelTools.Exceptions;
 
-namespace ExcelTools.Introspection
+namespace ExcelTools.Introspection.Mapping
 {
     public class ColumnOptions
     {

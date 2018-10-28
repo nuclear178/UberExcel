@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ExcelTools.Introspection;
+using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
 namespace ExcelTools.IO
