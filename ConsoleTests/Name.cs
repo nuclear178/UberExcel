@@ -9,7 +9,7 @@ namespace ConsoleTests
         [Column(1)] public string First { get; set; }
 
         [Column(2)]
-        [Converter(typeof(IsoDateTimeConverterBase))]
+        [Converter(typeof(IsoDateTimeConverter))]
         public DateTime CreationDate { get; set; }
 
         [Column(3)] public string Last { get; set; }

@@ -61,7 +61,7 @@ namespace ConsoleTests
             elapsedMs = watch.ElapsedMilliseconds;
 
             Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");*/
-            
+
             //CreateExcel();
             OpenExcel();
 
@@ -205,7 +205,7 @@ namespace ConsoleTests
 
         private static void OpenExcel()
         {
-            const string fileName = "Example-CRM-2018-10-26--05-41-45.xlsx";
+            const string fileName = "Example-CRM-2018-10-28--11-04-52.xlsx";
 
             var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
@@ -222,7 +222,7 @@ namespace ConsoleTests
                 int totalRows = fuelsWorksheet.Dimension.Rows;
 
 
-                var fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
+                IEnumerable<Fuel> fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
                 foreach (Fuel fuel in fuels)
                 {
                     Console.WriteLine(fuel);

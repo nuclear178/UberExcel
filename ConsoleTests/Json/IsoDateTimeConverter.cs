@@ -2,9 +2,9 @@ using ExcelTools.Converters;
 
 namespace ConsoleTests.Json
 {
-    public class IsoDateTimeConverterBase : DateTimeConverterBase
+    public class IsoDateTimeConverter : DateTimeConverterBase
     {
-        public IsoDateTimeConverterBase()
+        public IsoDateTimeConverter()
         {
             DateTimeFormat = "yyyy-MM-dd--hh-mm-ss";
         }
