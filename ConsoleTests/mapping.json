@@ -31,7 +31,7 @@
               {
                 "propertyName": "CreationDate",
                 "columnIndex": 5,
-                "converterClass": "ConsoleTests.Json.IsoDateTimeConverter"
+                "converterClass": "ConsoleTests.Json.IsoDateTimeConverter, ConsoleTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
               },
               {
                 "propertyName": "Last",

@@ -4,13 +4,13 @@ using System.Reflection;
 using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
-namespace ExcelTools.IO
+namespace ExcelTools.IO.Xlsx
 {
-    public class ObjectWriter<T> where T : new()
+    public class XlsxObjectWriter<T> where T : new()
     {
         private readonly ObjectSchema _schema;
 
-        public ObjectWriter(ObjectSchema schema)
+        public XlsxObjectWriter(ObjectSchema schema)
         {
             _schema = schema;
         }
@@ -24,7 +24,8 @@ namespace ExcelTools.IO
                 SetPropValue(
                     qualifiedName: column.FullName,
                     obj: createdObj,
-                    value: column.MapValueFrom(rawValue));
+                    value: column.MapValueFrom(rawValue)
+                );
             }
 
             return createdObj;

@@ -24,7 +24,6 @@ namespace ExcelTools.Introspection.Mapping
                 _columns.Values.Select(column => new ColumnOptions(
                     column.Index,
                     column.FullName,
-                    column.Type,
                     column.ConverterType)),
                 _type
             );
@@ -33,7 +32,6 @@ namespace ExcelTools.Introspection.Mapping
         public void AddColumn(
             int columnIndex,
             string columnName,
-            Type columnType,
             out int addedIndex,
             string parentName = null)
         {
@@ -50,7 +48,7 @@ namespace ExcelTools.Introspection.Mapping
                 ? columnName
                 : IncludeName(parentName, columnName);
 
-            _columns[columnIndex] = new Column(columnIndex, columnName, columnType);
+            _columns[columnIndex] = new Column(columnIndex, columnName);
 
             addedIndex = columnIndex;
         }
@@ -98,14 +96,12 @@ namespace ExcelTools.Introspection.Mapping
         {
             public int Index { get; }
             public string FullName { get; }
-            public Type Type { get; }
             public Type ConverterType { get; set; }
 
-            public Column(int index, string fullName, Type type)
+            public Column(int index, string fullName)
             {
                 Index = index;
                 FullName = fullName;
-                Type = type;
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExcelTools.Introspection.Mapping;
+using ExcelTools.Meta.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ExcelTools.Introspection
@@ -29,35 +30,42 @@ namespace ExcelTools.Introspection
             GetColumns(currentObj).ForEach(column =>
             {
                 _mapping.AddColumn(
-                    columnIndex: column["columnIndex"].ToObject<int>(),
-                    columnName: column["propertyName"].ToString(),
-                    columnType: null, // todo Move type interference into column obj...
+                    columnIndex: column[JsonPropertiesTokens.ColumnIndex].ToObject<int>(),
+                    columnName: column[JsonPropertiesTokens.PropertyName].ToString(),
                     addedIndex: out int _,
                     parentName: parentName
                 );
+
+                if (column[JsonPropertiesTokens.ConverterClass] != null)
+                {
+                    _mapping.AddConverter(
+                        columnIndex: column[JsonPropertiesTokens.ColumnIndex].ToObject<int>(),
+                        converterType: Type.GetType(column[JsonPropertiesTokens.ConverterClass].ToString())
+                    );
+                }
             });
 
             GetIncludedColumns(currentObj).ForEach(including =>
             {
                 _mapping.Include(
-                    includingName: including["propertyName"].ToString(),
+                    includingName: including[JsonPropertiesTokens.PropertyName].ToString(),
                     parentName: parentName
                 );
 
-                Traverse(including, including["propertyName"].ToString());
+                Traverse(including, including[JsonPropertiesTokens.PropertyName].ToString());
             });
         }
 
         private static List<JToken> GetColumns(JToken currentObj)
         {
-            return currentObj["columns"].Children().ToList();
+            return currentObj[JsonPropertiesTokens.Columns].Children().ToList();
         }
 
         private static List<JToken> GetIncludedColumns(JToken parentObj)
         {
-            return parentObj["includings"] == null
+            return parentObj[JsonPropertiesTokens.Includings] == null
                 ? new List<JToken>()
-                : parentObj["includings"].Children().ToList();
+                : parentObj[JsonPropertiesTokens.Includings].Children().ToList();
         }
     }
 }

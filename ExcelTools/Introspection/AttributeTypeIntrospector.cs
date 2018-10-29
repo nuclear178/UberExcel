@@ -34,7 +34,6 @@ namespace ExcelTools.Introspection
                 _mapping.AddColumn(
                     columnIndex: columnOptions.ColumnIndex,
                     columnName: column.Name,
-                    columnType: column.PropertyType,
                     addedIndex: out int addedIndex,
                     parentName: parentObj?.Name
                 );

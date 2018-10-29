@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using ExcelTools.Introspection;
 using ExcelTools.IO;
+using ExcelTools.IO.Xlsx;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 
@@ -87,6 +88,8 @@ namespace ConsoleTests
             //OpenExcel();
 
             OpenJson();
+
+            Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
         }
 
         /*private static object GetPropValue(string propAddress, object obj)
@@ -199,7 +202,7 @@ namespace ConsoleTests
             var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
             {
-                var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
+                var convert = XlsxSerializer<Fuel>.BuildAttributeBased();
                 ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("sl");
                 convert.SerializeObject(fuels, fuelsWorksheet);
 
@@ -214,7 +217,7 @@ namespace ConsoleTests
             var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
             {
-                var convert = WorksheetConvert<Fuel>.BuildAttributeBased();
+                var convert = XlsxSerializer<Fuel>.BuildAttributeBased();
                 ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
 
                 if (fuelsWorksheet == null)

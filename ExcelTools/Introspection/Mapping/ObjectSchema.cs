@@ -3,24 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-// ReSharper disable UnusedAutoPropertyAccessor.Local
-
 namespace ExcelTools.Introspection.Mapping
 {
     public class ObjectSchema : IEnumerable<ColumnOptions>
     {
         private readonly IEnumerable<ColumnOptions> _rowObjects;
-        private Type Type { get; }
+        private readonly Type _type;
 
         public ObjectSchema(IEnumerable<ColumnOptions> rowObjects, Type type)
         {
             _rowObjects = rowObjects;
-            Type = type;
+            _type = type;
         }
 
         public int ColumnMin => _rowObjects.Select(rowObj => rowObj.Index).Min();
 
         public int ColumnMax => _rowObjects.Select(rowObj => rowObj.Index).Max();
+
+        public object CreateEmpty()
+        {
+            return _type;
+        }
 
         public IEnumerator<ColumnOptions> GetEnumerator()
         {

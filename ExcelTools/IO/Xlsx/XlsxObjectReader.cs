@@ -3,13 +3,13 @@ using System.Reflection;
 using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
-namespace ExcelTools.IO
+namespace ExcelTools.IO.Xlsx
 {
-    public class ObjectReader
+    public class XlsxObjectReader
     {
         private readonly ObjectSchema _schema;
 
-        public ObjectReader(ObjectSchema schema)
+        public XlsxObjectReader(ObjectSchema schema)
         {
             _schema = schema;
         }
