@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using ExcelTools.Introspection;
 using ExcelTools.IO;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -240,7 +241,10 @@ namespace ConsoleTests
 
             //Console.WriteLine(mappingJson["data"]);
 
-            WorksheetConvert<Fuel>.BuildJsonBased((JObject) mappingJson["data"]);
+            //WorksheetConvert<Fuel>.BuildJsonBased((JObject) mappingJson["data"]);
+
+            var introspector = new JsonTypeIntrospector(typeof(Fuel), (JObject) mappingJson["data"]);
+            introspector.Analyze();
         }
     }
 }

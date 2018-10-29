@@ -28,20 +28,20 @@ namespace ExcelTools.Introspection
         // ReSharper disable once SuggestBaseTypeForParameter
         private void Traverse(Type currentType, PropertyInfo parentObj = null)
         {
-            GetColumns(currentType).ForEach(currentColumn =>
+            GetColumns(currentType).ForEach(column =>
             {
-                var columnOptions = currentColumn.GetCustomAttribute<ColumnAttribute>();
+                var columnOptions = column.GetCustomAttribute<ColumnAttribute>();
                 _mapping.AddColumn(
                     columnIndex: columnOptions.ColumnIndex,
-                    columnName: currentColumn.Name,
-                    columnType: currentColumn.PropertyType,
+                    columnName: column.Name,
+                    columnType: column.PropertyType,
                     addedIndex: out int addedIndex,
                     parentName: parentObj?.Name
                 );
 
-                if (!Attribute.IsDefined(currentColumn, typeof(ConverterAttribute))) return;
+                if (!Attribute.IsDefined(column, typeof(ConverterAttribute))) return;
 
-                var converterOptions = currentColumn.GetCustomAttribute<ConverterAttribute>();
+                var converterOptions = column.GetCustomAttribute<ConverterAttribute>();
                 _mapping.AddConverter(
                     columnIndex: addedIndex,
                     converterType: converterOptions.ConverterType
@@ -51,9 +51,9 @@ namespace ExcelTools.Introspection
             GetIncludedColumns(currentType).ForEach(included =>
             {
                 var includingOptions = included.GetCustomAttribute<IncludeAttribute>();
-                _mapping.Include(
+                _mapping.IncludeWithOffset(
                     offset: includingOptions.Offset,
-                    name: included.Name,
+                    includingName: included.Name,
                     parentName: parentObj?.Name
                 );
 

@@ -55,17 +55,22 @@ namespace ExcelTools.Introspection.Mapping
             addedIndex = columnIndex;
         }
 
-        public void Include(int offset, string name, string parentName = null)
+        public void IncludeWithOffset(int offset, string includingName, string parentName = null)
         {
             if (parentName == null)
             {
-                _includings.Add(new Including(name, offset));
+                _includings.Add(new Including(includingName, offset));
             }
             else
             {
                 _includings.SingleOrDefault(incl => incl.Name.EndsWith(parentName))
-                    ?.Complete(name, offset);
+                    ?.Complete(includingName, offset);
             }
+        }
+
+        public void Include(string includingName, string parentName = null)
+        {
+            IncludeWithOffset(0, includingName, parentName);
         }
 
         public void AddConverter(int columnIndex, Type converterType) =>
