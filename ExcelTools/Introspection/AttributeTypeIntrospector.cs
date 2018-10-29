@@ -7,20 +7,20 @@ using ExcelTools.Meta.Worksheet;
 
 namespace ExcelTools.Introspection
 {
-    public class AttributeBasedIntrospector : ITypeIntrospector
+    public class AttributeTypeIntrospector : ITypeIntrospector
     {
-        private readonly Type _rootType;
+        private readonly Type _objType;
         private readonly ObjectSchemaBuilder _mapping;
 
-        public AttributeBasedIntrospector(Type rootType)
+        public AttributeTypeIntrospector(Type objType)
         {
-            _rootType = rootType;
-            _mapping = new ObjectSchemaBuilder(rootType);
+            _objType = objType;
+            _mapping = new ObjectSchemaBuilder(objType);
         }
 
         public ObjectSchema Analyze()
         {
-            Traverse(_rootType);
+            Traverse(_objType);
 
             return _mapping.Build();
         }

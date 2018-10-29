@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ExcelTools.Introspection;
 using ExcelTools.Introspection.Mapping;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 
 namespace ExcelTools.IO
@@ -9,7 +10,16 @@ namespace ExcelTools.IO
     {
         public static WorksheetConvert<T> BuildAttributeBased()
         {
-            return new WorksheetConvert<T>(new AttributeBasedIntrospector(typeof(T)));
+            return new WorksheetConvert<T>(
+                new AttributeTypeIntrospector(typeof(T))
+            );
+        }
+
+        public static WorksheetConvert<T> BuildJsonBased(JObject mappingJson)
+        {
+            return new WorksheetConvert<T>(
+                new JsonTypeIntrospector(typeof(T), mappingJson)
+            );
         }
 
         private readonly ObjectSchema _objectSchema;
@@ -21,12 +31,12 @@ namespace ExcelTools.IO
 
         public void SerializeObject(List<T> objects, ExcelWorksheet worksheet, int fromRowIndex = 1)
         {
-            var builder = new WorksheetRowBuilder(_objectSchema);
+            var reader = new ObjectReader(_objectSchema);
 
             int currentIndex = fromRowIndex;
             objects.ForEach(rowObj =>
             {
-                builder.Build(worksheet.Cells[
+                reader.Build(worksheet.Cells[
                     FromRow: currentIndex,
                     FromCol: _objectSchema.ColumnMin,
                     ToRow: currentIndex + 1,
@@ -38,11 +48,11 @@ namespace ExcelTools.IO
 
         public IEnumerable<T> DeserializeObject(ExcelWorksheet worksheet, int fromRowIndex = 1, int toRowIndex = 1)
         {
-            var builder = new ObjectBuilder<T>(_objectSchema);
+            var writer = new ObjectWriter<T>(_objectSchema);
             var objects = new List<T>();
             for (int rowIndex = fromRowIndex; rowIndex <= toRowIndex; rowIndex++)
             {
-                T builtObj = builder.Build(worksheet.Cells[
+                T builtObj = writer.Build(worksheet.Cells[
                     FromRow: fromRowIndex,
                     FromCol: _objectSchema.ColumnMin,
                     ToRow: fromRowIndex + 1,

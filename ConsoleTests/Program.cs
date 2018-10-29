@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using ExcelTools.IO;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 
 namespace ConsoleTests
@@ -62,9 +63,6 @@ namespace ConsoleTests
 
             Console.WriteLine($"Time elapsed opening xlsx: {elapsedMs}");*/
 
-            //CreateExcel();
-            OpenExcel();
-
             /*Activator.CreateInstance(typeof(Name));
             Activator.CreateInstance(typeof(Bucket));
             fuel = Activator.CreateInstance<Fuel>();
@@ -83,6 +81,11 @@ namespace ConsoleTests
             }
 
             Console.WriteLine(fuel.Bucket == null);*/
+
+            //CreateExcel();
+            //OpenExcel();
+
+            OpenJson();
         }
 
         /*private static object GetPropValue(string propAddress, object obj)
@@ -228,6 +231,16 @@ namespace ConsoleTests
                     Console.WriteLine(fuel);
                 }
             }
+        }
+
+        private static void OpenJson()
+        {
+            string fileJson = File.ReadAllText("mapping.json");
+            JObject mappingJson = JObject.Parse(fileJson);
+
+            //Console.WriteLine(mappingJson["data"]);
+
+            WorksheetConvert<Fuel>.BuildJsonBased((JObject) mappingJson["data"]);
         }
     }
 }

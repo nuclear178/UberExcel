@@ -1,0 +1,46 @@
+{
+  "class": "ConsoleTests.Fuel",
+  "data": {
+    "columns": [
+      {
+        "propertyName": "Type",
+        "columnIndex": 1
+      },
+      {
+        "propertyName": "Volume",
+        "columnIndex": 2
+      }
+    ],
+    "includings": [
+      {
+        "propertyName": "Bucket",
+        "columns": [
+          {
+            "propertyName": "Prop1",
+            "columnIndex": 3
+          }
+        ],
+        "includings": [
+          {
+            "propertyName": "Prop2",
+            "columns": [
+              {
+                "propertyName": "First",
+                "columnIndex": 4
+              },
+              {
+                "propertyName": "CreationDate",
+                "columnIndex": 5,
+                "converterClass": "ConsoleTests.Json.IsoDateTimeConverter"
+              },
+              {
+                "propertyName": "Last",
+                "columnIndex": 6
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

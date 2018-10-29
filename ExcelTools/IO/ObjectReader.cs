@@ -5,11 +5,11 @@ using OfficeOpenXml;
 
 namespace ExcelTools.IO
 {
-    public class WorksheetRowBuilder
+    public class ObjectReader
     {
         private readonly ObjectSchema _schema;
 
-        public WorksheetRowBuilder(ObjectSchema schema)
+        public ObjectReader(ObjectSchema schema)
         {
             _schema = schema;
         }

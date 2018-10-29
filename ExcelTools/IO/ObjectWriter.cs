@@ -6,11 +6,11 @@ using OfficeOpenXml;
 
 namespace ExcelTools.IO
 {
-    public class ObjectBuilder<T> where T : new()
+    public class ObjectWriter<T> where T : new()
     {
         private readonly ObjectSchema _schema;
 
-        public ObjectBuilder(ObjectSchema schema)
+        public ObjectWriter(ObjectSchema schema)
         {
             _schema = schema;
         }
