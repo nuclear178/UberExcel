@@ -20,7 +20,7 @@ namespace ConsoleTests
 
         public override string ToString()
         {
-            return $"{nameof(First)}: {First}, {nameof(Last)}: {Last}";
+            return $"{nameof(First)}: {First}, {nameof(CreationDate)}: {CreationDate}, {nameof(Last)}: {Last}";
         }
     }
 }

@@ -8,16 +8,17 @@ namespace ExcelTools.Introspection.Mapping
     {
         private readonly Type _converterType;
 
-        public ColumnOptions(int index, string fullName, Type converterType)
+        public ColumnOptions(int index, string fullName, Type type, Type converterType)
         {
             Index = index;
             FullName = fullName;
+            Type = type;
             _converterType = converterType;
         }
 
         public int Index { get; }
         public string FullName { get; }
-        private Type Type { get; } // todo Interfere
+        private Type Type { get; }
         private bool HasCustomConverter => _converterType != null;
 
         public object MapValueFrom(object rawValue)

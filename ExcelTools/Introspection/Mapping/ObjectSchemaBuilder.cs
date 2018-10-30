@@ -7,13 +7,13 @@ namespace ExcelTools.Introspection.Mapping
 {
     public class ObjectSchemaBuilder
     {
-        private readonly Type _type;
+        private readonly Type _objType;
         private readonly Dictionary<int, Column> _columns;
         private readonly List<Including> _includings;
 
-        public ObjectSchemaBuilder(Type type)
+        public ObjectSchemaBuilder(Type objType)
         {
-            _type = type;
+            _objType = objType;
             _columns = new Dictionary<int, Column>();
             _includings = new List<Including>();
         }
@@ -24,8 +24,9 @@ namespace ExcelTools.Introspection.Mapping
                 _columns.Values.Select(column => new ColumnOptions(
                     column.Index,
                     column.FullName,
+                    column.DeduceType(_objType),
                     column.ConverterType)),
-                _type
+                _objType
             );
         }
 
@@ -97,6 +98,12 @@ namespace ExcelTools.Introspection.Mapping
             public int Index { get; }
             public string FullName { get; }
             public Type ConverterType { get; set; }
+
+            public Type DeduceType(Type rootType)
+            {
+                return FullName.Split('.')
+                    .Aggregate(rootType, (current, name) => current.GetProperty(name).PropertyType);
+            }
 
             public Column(int index, string fullName)
             {

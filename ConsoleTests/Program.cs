@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using ExcelTools.Introspection;
-using ExcelTools.IO;
 using ExcelTools.IO.Xlsx;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -85,11 +84,11 @@ namespace ConsoleTests
             Console.WriteLine(fuel.Bucket == null);*/
 
             //CreateExcel();
-            //OpenExcel();
+            OpenExcel();
 
-            OpenJson();
+            //OpenJson();
 
-            Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
+            //Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
         }
 
         /*private static object GetPropValue(string propAddress, object obj)
@@ -212,9 +211,7 @@ namespace ConsoleTests
 
         private static void OpenExcel()
         {
-            const string fileName = "Example-CRM-2018-10-28--11-04-52.xlsx";
-
-            var file = new FileInfo(fileName);
+            var file = new FileInfo(FileName);
             using (var package = new ExcelPackage(file))
             {
                 var convert = XlsxSerializer<Fuel>.BuildAttributeBased();
@@ -249,5 +246,7 @@ namespace ConsoleTests
             var introspector = new JsonTypeIntrospector(typeof(Fuel), (JObject) mappingJson["data"]);
             introspector.Analyze();
         }
+
+        private const string FileName = "Example-CRM-2018-10-30--11-10-20.xlsx";
     }
 }
