@@ -58,7 +58,9 @@ namespace ExcelTools.Introspection
 
         private static List<JToken> GetColumns(JToken currentObj)
         {
-            return currentObj[JsonPropertiesTokens.Columns].Children().ToList();
+            return currentObj[JsonPropertiesTokens.Columns] == null
+                ? new List<JToken>()
+                : currentObj[JsonPropertiesTokens.Columns].Children().ToList();
         }
 
         private static List<JToken> GetIncludedColumns(JToken parentObj)

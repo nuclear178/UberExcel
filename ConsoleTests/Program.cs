@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using ExcelTools.Introspection;
+using ExcelTools.Introspection.Mapping;
 using ExcelTools.IO.Xlsx;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -84,9 +85,10 @@ namespace ConsoleTests
             Console.WriteLine(fuel.Bucket == null);*/
 
             //CreateExcel();
-            OpenExcel();
+            //OpenExcel();
 
             //OpenJson();
+            OpenExcelJson();
 
             //Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
         }
@@ -234,6 +236,33 @@ namespace ConsoleTests
             }
         }
 
+        private static void OpenExcelJson()
+        {
+            var file = new FileInfo(FileName);
+            using (var package = new ExcelPackage(file))
+            {
+                string fileJson = File.ReadAllText("mapping.json");
+                var mappingJson = (JObject) JObject.Parse(fileJson)["data"];
+                XlsxSerializer<Fuel> convert = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+
+                if (fuelsWorksheet == null)
+                {
+                    Console.WriteLine("returning....");
+                    return;
+                }
+
+                int totalRows = fuelsWorksheet.Dimension.Rows;
+
+
+                IEnumerable<Fuel> fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
+                foreach (Fuel fuel in fuels)
+                {
+                    Console.WriteLine(fuel);
+                }
+            }
+        }
+
         private static void OpenJson()
         {
             string fileJson = File.ReadAllText("mapping.json");
@@ -244,7 +273,9 @@ namespace ConsoleTests
             //WorksheetConvert<Fuel>.BuildJsonBased((JObject) mappingJson["data"]);
 
             var introspector = new JsonTypeIntrospector(typeof(Fuel), (JObject) mappingJson["data"]);
-            introspector.Analyze();
+            ObjectSchema mapping = introspector.Analyze();
+
+            Console.WriteLine(mapping);
         }
 
         private const string FileName = "Example-CRM-2018-10-30--11-10-20.xlsx";
