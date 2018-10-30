@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ExcelTools.Introspection;
 using ExcelTools.Introspection.Mapping;
 using Newtonsoft.Json.Linq;
@@ -18,7 +17,7 @@ namespace ExcelTools.IO.Xlsx
         public static XlsxSerializer<T> BuildJsonBased(JObject mappingJson)
         {
             return new XlsxSerializer<T>(
-                new JsonTypeIntrospector(typeof(T), mappingJson)
+                new JsonTypeIntrospector(typeof(T), mappingJson["data"])
             );
         }
 
@@ -29,41 +28,26 @@ namespace ExcelTools.IO.Xlsx
             _objectSchema = typeIntrospector.Analyze();
         }
 
-        public void SerializeObject(List<T> objects, ExcelWorksheet worksheet, int fromRowIndex = 1)
+        public void SerializeObject(T obj, ExcelWorksheet worksheet, int rowIndex)
         {
             var reader = new XlsxObjectReader(_objectSchema);
-
-            int currentIndex = fromRowIndex;
-            objects.ForEach(rowObj =>
-            {
-                reader.Build(worksheet.Cells[
-                    FromRow: currentIndex,
-                    FromCol: _objectSchema.ColumnMin,
-                    ToRow: currentIndex + 1,
-                    ToCol: _objectSchema.ColumnMax
-                ], currentIndex, rowObj);
-                currentIndex++;
-            });
+            reader.Build(worksheet.Cells[
+                FromRow: rowIndex,
+                FromCol: _objectSchema.ColumnMin,
+                ToRow: rowIndex + 1,
+                ToCol: _objectSchema.ColumnMax
+            ], rowIndex, obj);
         }
 
-        public IEnumerable<T> DeserializeObject(ExcelWorksheet worksheet, int fromRowIndex = 1, int toRowIndex = 1)
+        public T DeserializeObject(ExcelWorksheet worksheet, int rowIndex)
         {
             var writer = new XlsxObjectWriter<T>(_objectSchema);
-            var objects = new List<T>();
-            for (int rowIndex = fromRowIndex; rowIndex <= toRowIndex; rowIndex++)
-            {
-                T builtObj = writer.Build(worksheet.Cells[
-                    FromRow: fromRowIndex,
-                    FromCol: _objectSchema.ColumnMin,
-                    ToRow: fromRowIndex + 1,
-                    ToCol:
-                    _objectSchema.ColumnMax
-                ], rowIndex);
-
-                objects.Add(builtObj);
-            }
-
-            return objects;
+            return writer.Build(worksheet.Cells[
+                FromRow: rowIndex,
+                FromCol: _objectSchema.ColumnMin,
+                ToRow: rowIndex + 1,
+                ToCol: _objectSchema.ColumnMax
+            ], rowIndex);
         }
     }
 }

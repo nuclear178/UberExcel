@@ -5,6 +5,7 @@ using System.IO;
 using ExcelTools.Introspection;
 using ExcelTools.Introspection.Mapping;
 using ExcelTools.IO.Xlsx;
+using ExcelTools.Util;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 
@@ -88,7 +89,11 @@ namespace ConsoleTests
             //OpenExcel();
 
             //OpenJson();
-            OpenExcelJson();
+            //OpenExcelJson();
+
+            //AddItemJson();
+
+            AddItemsJson();
 
             //Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
         }
@@ -203,11 +208,12 @@ namespace ConsoleTests
             var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
             {
-                var convert = XlsxSerializer<Fuel>.BuildAttributeBased();
-                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("sl");
-                convert.SerializeObject(fuels, fuelsWorksheet);
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("1");
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildAttributeBased();
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
 
-                package.Save();
+                entities.AddRange(fuels);
+                entities.SaveChanges();
             }
         }
 
@@ -216,8 +222,9 @@ namespace ConsoleTests
             var file = new FileInfo(FileName);
             using (var package = new ExcelPackage(file))
             {
-                var convert = XlsxSerializer<Fuel>.BuildAttributeBased();
                 ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildAttributeBased();
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
 
                 if (fuelsWorksheet == null)
                 {
@@ -225,26 +232,74 @@ namespace ConsoleTests
                     return;
                 }
 
-                int totalRows = fuelsWorksheet.Dimension.Rows;
-
-
-                IEnumerable<Fuel> fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
-                foreach (Fuel fuel in fuels)
-                {
-                    Console.WriteLine(fuel);
-                }
+                entities.ToList().ForEach(Console.WriteLine);
             }
         }
 
-        private static void OpenExcelJson()
+        private static void CreateExcelJson(string mappingFileName = "mapping.json")
+        {
+            var fuels = new List<Fuel>
+            {
+                new Fuel
+                {
+                    Type = "tp1",
+                    Volume = 5,
+                    Bucket = new Bucket
+                    {
+                        Prop1 = 1, Prop2 = new Name
+                        {
+                            First = "fr1",
+                            CreationDate = DateTime.Now,
+                            Last = "ls1"
+                        }
+                    }
+                },
+                new Fuel
+                {
+                    Type = "tp2",
+                    Volume = 7,
+                    Bucket = new Bucket
+                    {
+                        Prop1 = 2, Prop2 = new Name
+                        {
+                            First = "fr5",
+                            CreationDate = DateTime.Now,
+                            Last = "ls7"
+                        }
+                    }
+                }
+            };
+
+            string fileName = "Example-CRM-" + DateTime.Now.ToString("yyyy-MM-dd--hh-mm-ss") + ".xlsx";
+
+            var file = new FileInfo(fileName);
+            using (var package = new ExcelPackage(file))
+            {
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets.Add("1");
+
+                string fileJson = File.ReadAllText(mappingFileName);
+                JObject mappingJson = JObject.Parse(fileJson);
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
+
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
+
+                entities.AddRange(fuels);
+                entities.SaveChanges();
+            }
+        }
+
+        private static void OpenExcelJson(string mappingFileName = "mapping.json")
         {
             var file = new FileInfo(FileName);
             using (var package = new ExcelPackage(file))
             {
-                string fileJson = File.ReadAllText("mapping.json");
-                var mappingJson = (JObject) JObject.Parse(fileJson)["data"];
-                XlsxSerializer<Fuel> convert = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
                 ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+
+                string fileJson = File.ReadAllText(mappingFileName);
+                JObject mappingJson = JObject.Parse(fileJson);
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
+
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
 
                 if (fuelsWorksheet == null)
                 {
@@ -252,14 +307,7 @@ namespace ConsoleTests
                     return;
                 }
 
-                int totalRows = fuelsWorksheet.Dimension.Rows;
-
-
-                IEnumerable<Fuel> fuels = convert.DeserializeObject(fuelsWorksheet, 1, totalRows);
-                foreach (Fuel fuel in fuels)
-                {
-                    Console.WriteLine(fuel);
-                }
+                entities.ToList().ForEach(Console.WriteLine);
             }
         }
 
@@ -278,6 +326,80 @@ namespace ConsoleTests
             Console.WriteLine(mapping);
         }
 
-        private const string FileName = "Example-CRM-2018-10-30--11-10-20.xlsx";
+        private static void AddItemJson(string mappingFileName = "mapping.json")
+        {
+            var file = new FileInfo(FileName);
+            using (var package = new ExcelPackage(file))
+            {
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+
+                string fileJson = File.ReadAllText(mappingFileName);
+                JObject mappingJson = JObject.Parse(fileJson);
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
+
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
+
+                if (fuelsWorksheet == null)
+                {
+                    Console.WriteLine("returning....");
+                    return;
+                }
+
+                entities.Add(GenerateFuel());
+                entities.SaveChanges();
+            }
+        }
+
+        private static void AddItemsJson(string mappingFileName = "mapping.json")
+        {
+            var file = new FileInfo(FileName);
+            using (var package = new ExcelPackage(file))
+            {
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+
+                string fileJson = File.ReadAllText(mappingFileName);
+                JObject mappingJson = JObject.Parse(fileJson);
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildJsonBased(mappingJson);
+
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
+
+                if (fuelsWorksheet == null)
+                {
+                    Console.WriteLine("returning....");
+                    return;
+                }
+
+                var fuels = new List<Fuel>
+                {
+                    GenerateFuel(),
+                    GenerateFuel(),
+                    GenerateFuel()
+                };
+
+                entities.AddRange(fuels);
+                entities.SaveChanges();
+            }
+        }
+
+        private static Fuel GenerateFuel()
+        {
+            var random = new Random();
+            return new Fuel
+            {
+                Type = "ad" + random.Next(0, 9),
+                Volume = random.Next(0, 9),
+                Bucket = new Bucket
+                {
+                    Prop1 = random.Next(0, 9), Prop2 = new Name
+                    {
+                        First = "fr" + random.Next(0, 9),
+                        CreationDate = DateTime.Now,
+                        Last = "ls" + random.Next(0, 9)
+                    }
+                }
+            };
+        }
+
+        private const string FileName = "Example-CRM-2018-10-30--04-43-07.xlsx";
     }
 }

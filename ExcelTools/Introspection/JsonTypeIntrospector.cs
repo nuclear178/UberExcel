@@ -10,9 +10,9 @@ namespace ExcelTools.Introspection
     public class JsonTypeIntrospector : ITypeIntrospector
     {
         private readonly ObjectSchemaBuilder _mapping;
-        private readonly JObject _mappingJson;
+        private readonly JToken _mappingJson;
 
-        public JsonTypeIntrospector(Type objType, JObject mappingJson)
+        public JsonTypeIntrospector(Type objType, JToken mappingJson)
         {
             _mappingJson = mappingJson;
             _mapping = new ObjectSchemaBuilder(objType);
