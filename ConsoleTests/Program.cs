@@ -89,11 +89,10 @@ namespace ConsoleTests
             //OpenExcel();
 
             //OpenJson();
-            //OpenExcelJson();
+            OpenExcelJson();
 
             //AddItemJson();
-
-            AddItemsJson();
+            //AddItemsJson();
 
             //Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
         }

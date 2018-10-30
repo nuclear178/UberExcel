@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
@@ -21,39 +18,10 @@ namespace ExcelTools.IO.Xlsx
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = cells[rowIndex, column.Index].Value;
-                SetPropValue(
-                    qualifiedName: column.FullName,
-                    obj: createdObj,
-                    value: column.MapValueFrom(rawValue)
-                );
+                column.SetValue(createdObj, column.MapValueFrom(rawValue));
             }
 
             return createdObj;
-        }
-
-        private static void SetPropValue(string qualifiedName, object obj, object value)
-        {
-            string[] parts = qualifiedName.Split('.');
-            for (var i = 0; i < parts.Length - 1; i++)
-            {
-                PropertyInfo property = obj.GetType().GetProperty(parts[i]);
-
-                object propValue = property.GetValue(obj, null);
-                if (propValue != null)
-                {
-                    obj = propValue;
-                    continue;
-                }
-
-                object propObj = Activator.CreateInstance(property.PropertyType);
-                property.SetValue(obj, propObj, null);
-
-                obj = propObj;
-            }
-
-            obj.GetType()
-                .GetProperty(parts.Last())
-                .SetValue(obj, value, null);
         }
     }
 }

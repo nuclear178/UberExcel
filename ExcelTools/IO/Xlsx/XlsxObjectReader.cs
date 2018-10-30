@@ -1,5 +1,3 @@
-using System;
-using System.Reflection;
 using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
@@ -8,6 +6,7 @@ namespace ExcelTools.IO.Xlsx
     public class XlsxObjectReader
     {
         private readonly ObjectSchema _schema;
+        //private IValueMapper _mapper;
 
         public XlsxObjectReader(ObjectSchema schema)
         {
@@ -18,25 +17,9 @@ namespace ExcelTools.IO.Xlsx
         {
             foreach (ColumnOptions column in _schema)
             {
-                object rawValue = GetPropValue(column.FullName, obj);
+                object rawValue = column.GetValue(obj);
                 cells[rowIndex, column.Index].Value = column.MapValueTo(rawValue);
             }
-        }
-
-        private static object GetPropValue(string qualifiedName, object obj)
-        {
-            foreach (string part in qualifiedName.Split('.'))
-            {
-                if (obj == null) return null;
-
-                Type type = obj.GetType();
-                PropertyInfo property = type.GetProperty(part);
-                if (property == null) return null;
-
-                obj = property.GetValue(obj, null);
-            }
-
-            return obj;
         }
     }
 }
