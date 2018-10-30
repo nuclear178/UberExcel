@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExcelTools.Introspection.Mapping;
-using ExcelTools.Meta.Worksheet;
+using ExcelTools.Meta.Attributes;
 
 namespace ExcelTools.Introspection
 {

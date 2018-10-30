@@ -1,6 +1,6 @@
 using System;
 
-namespace ExcelTools.Meta.Worksheet
+namespace ExcelTools.Meta.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class ColumnAttribute : Attribute

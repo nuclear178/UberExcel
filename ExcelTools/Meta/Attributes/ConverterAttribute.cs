@@ -2,7 +2,7 @@ using System;
 using ExcelTools.Converters;
 using ExcelTools.Exceptions;
 
-namespace ExcelTools.Meta.Worksheet
+namespace ExcelTools.Meta.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ConverterAttribute : Attribute
