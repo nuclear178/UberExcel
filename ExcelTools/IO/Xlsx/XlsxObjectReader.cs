@@ -6,7 +6,6 @@ namespace ExcelTools.IO.Xlsx
     public class XlsxObjectReader
     {
         private readonly ObjectSchema _schema;
-        //private IValueMapper _mapper;
 
         public XlsxObjectReader(ObjectSchema schema)
         {

@@ -86,10 +86,10 @@ namespace ConsoleTests
             Console.WriteLine(fuel.Bucket == null);*/
 
             //CreateExcel();
-            //OpenExcel();
+            OpenExcel();
 
             //OpenJson();
-            OpenExcelJson();
+            //OpenExcelJson();
 
             //AddItemJson();
             //AddItemsJson();

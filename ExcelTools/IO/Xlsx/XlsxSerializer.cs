@@ -1,3 +1,4 @@
+using ExcelTools.Converters.Mappers;
 using ExcelTools.Introspection;
 using ExcelTools.Introspection.Mapping;
 using Newtonsoft.Json.Linq;
@@ -10,21 +11,26 @@ namespace ExcelTools.IO.Xlsx
         public static XlsxSerializer<T> BuildAttributeBased()
         {
             return new XlsxSerializer<T>(
-                new AttributeTypeIntrospector(typeof(T))
+                new AttributeTypeIntrospector(typeof(T)),
+                new DefaultValueMapper()
             );
         }
 
         public static XlsxSerializer<T> BuildJsonBased(JObject mappingJson)
         {
             return new XlsxSerializer<T>(
-                new JsonTypeIntrospector(typeof(T), mappingJson["data"])
+                new JsonTypeIntrospector(typeof(T), mappingJson["data"]),
+                new DefaultValueMapper()
             );
         }
 
         private readonly ObjectSchema _objectSchema;
+        private readonly IValueMapper _mapper;
 
-        private XlsxSerializer(ITypeIntrospector typeIntrospector)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public XlsxSerializer(ITypeIntrospector typeIntrospector, IValueMapper mapper)
         {
+            _mapper = mapper;
             _objectSchema = typeIntrospector.Analyze();
         }
 
@@ -41,7 +47,7 @@ namespace ExcelTools.IO.Xlsx
 
         public T DeserializeObject(ExcelWorksheet worksheet, int rowIndex)
         {
-            var writer = new XlsxObjectWriter<T>(_objectSchema);
+            var writer = new XlsxObjectWriter<T>(_objectSchema, _mapper);
             return writer.Build(worksheet.Cells[
                 FromRow: rowIndex,
                 FromCol: _objectSchema.ColumnMin,

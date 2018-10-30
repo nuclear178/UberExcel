@@ -47,16 +47,16 @@ namespace ExcelTools.Introspection
                 );
             });
 
-            GetIncludedColumns(currentType).ForEach(included =>
+            GetIncludedColumns(currentType).ForEach(including =>
             {
-                var includingOptions = included.GetCustomAttribute<IncludeAttribute>();
+                var includingOptions = including.GetCustomAttribute<IncludeAttribute>();
                 _mapping.IncludeWithOffset(
                     offset: includingOptions.Offset,
-                    includingName: included.Name,
+                    includingName: including.Name,
                     parentName: parentObj?.Name
                 );
 
-                Traverse(currentType: included.PropertyType, parentObj: included);
+                Traverse(currentType: including.PropertyType, parentObj: including);
             });
         }
 

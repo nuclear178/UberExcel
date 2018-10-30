@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExcelTools.Converters;
-using ExcelTools.Exceptions;
+using ExcelTools.Converters.Mappers;
 
 namespace ExcelTools.Introspection.Mapping
 {
@@ -65,30 +65,11 @@ namespace ExcelTools.Introspection.Mapping
                 .SetValue(obj, value, null);
         }
 
-        public object MapValueFrom(object rawValue)
+        public object MapValueFrom(object rawValue, IValueMapper mapper)
         {
-            if (HasCustomConverter)
-                return GetCustomConverter().Read(rawValue.ToString());
-
-            if (_propType == typeof(string))
-                return rawValue.ToString();
-
-            if (_propType == typeof(short))
-                return Convert.ToInt16(rawValue);
-
-            if (_propType == typeof(int))
-                return Convert.ToInt32(rawValue);
-
-            if (_propType == typeof(long))
-                return Convert.ToInt64(rawValue);
-
-            if (_propType == typeof(double))
-                return Convert.ToDouble(rawValue);
-
-            if (_propType == typeof(decimal))
-                return Convert.ToDecimal(rawValue);
-
-            throw ExcelWorksheetMapperException.UnsupportedColumnType(typeName: _propType.FullName);
+            return HasCustomConverter
+                ? GetCustomConverter().Read(rawValue.ToString())
+                : mapper.MapValue(_propType, rawValue);
         }
 
         public object MapValueTo(object rawValue)
