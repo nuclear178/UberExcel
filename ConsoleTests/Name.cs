@@ -14,13 +14,16 @@ namespace ConsoleTests
 
         [Column(3)] public string Last { get; set; }
 
+        [Column(4)] public Gender Gender { get; set; }
+
         public Name()
         {
         }
 
         public override string ToString()
         {
-            return $"{nameof(First)}: {First}, {nameof(CreationDate)}: {CreationDate}, {nameof(Last)}: {Last}";
+            return
+                $"{nameof(First)}: {First}, {nameof(CreationDate)}: {CreationDate}, {nameof(Last)}: {Last}, {nameof(Gender)}: {Gender}";
         }
     }
 }

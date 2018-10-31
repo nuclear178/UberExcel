@@ -2,8 +2,8 @@ namespace ExcelTools.Converters
 {
     public interface IConverter
     {
-        string Write(object val);
+        string Write(object value);
 
-        object Read(string val);
+        object Read(string value);
     }
 }

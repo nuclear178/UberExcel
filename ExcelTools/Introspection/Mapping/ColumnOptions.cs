@@ -8,21 +8,21 @@ namespace ExcelTools.Introspection.Mapping
 {
     public class ColumnOptions
     {
+        public int Index { get; }
+
         private readonly string _fullName;
         private readonly Type _propType;
-        private readonly Type _converterType;
+
+        private IConverter Converter { get; set; }
+        private bool HasCustomConverter => Converter != null;
 
         public ColumnOptions(int index, string fullName, Type propType, Type converterType)
         {
             Index = index;
             _fullName = fullName;
             _propType = propType;
-            _converterType = converterType;
+            InitializeCustomConverter(converterType);
         }
-
-        public int Index { get; }
-
-        private bool HasCustomConverter => _converterType != null;
 
         public object GetValue(object obj)
         {
@@ -65,26 +65,33 @@ namespace ExcelTools.Introspection.Mapping
                 .SetValue(obj, value, null);
         }
 
-        public object MapValueFrom(object rawValue, IValueMapper mapper)
+        public object MapFrom(object rawValue, IValueMapper mapper)
         {
             return HasCustomConverter
-                ? GetCustomConverter().Read(rawValue.ToString())
+                ? Converter.Read(rawValue.ToString())
                 : mapper.MapValue(_propType, rawValue);
         }
 
-        public object MapValueTo(object rawValue)
+        public object MapTo(object rawValue)
         {
             return HasCustomConverter
-                ? GetCustomConverter().Write(rawValue)
+                ? Converter.Write(rawValue)
                 : rawValue;
         }
 
-        private IConverter GetCustomConverter()
+        private void InitializeCustomConverter(Type converterType)
         {
-            if (!HasCustomConverter)
-                throw new Exception("Custom converter is not defined.");
+            if (_propType.IsEnum)
+            {
+                Converter = new EnumConverter(_propType);
+            }
+            else
+            {
+                if (converterType == null)
+                    return;
 
-            return (IConverter) Activator.CreateInstance(_converterType);
+                Converter = (IConverter) Activator.CreateInstance(converterType);
+            }
         }
     }
 }

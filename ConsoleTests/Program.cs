@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using ExcelTools.Converters;
 using ExcelTools.Introspection;
 using ExcelTools.Introspection.Mapping;
 using ExcelTools.IO.Xlsx;
@@ -85,8 +86,9 @@ namespace ConsoleTests
 
             Console.WriteLine(fuel.Bucket == null);*/
 
-            //CreateExcel();
-            OpenExcel();
+            CreateExcel(out string fileName);
+            AddItems(fileName);
+            OpenExcel(fileName);
 
             //OpenJson();
             //OpenExcelJson();
@@ -95,7 +97,10 @@ namespace ConsoleTests
             //AddItemsJson();
 
             //Console.WriteLine(typeof(Fuel).AssemblyQualifiedName);
+
+            //CheckEnum();
         }
+
 
         /*private static object GetPropValue(string propAddress, object obj)
         {
@@ -162,46 +167,44 @@ namespace ConsoleTests
             }
         }*/
 
-        /*private void InstantiateWithIncludings(object obj) //todo separate deep instantiation 
+        private static void AddItems(string fileName)
         {
-        }*/
+            var file = new FileInfo(fileName);
+            using (var package = new ExcelPackage(file))
+            {
+                ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
+                XlsxSerializer<Fuel> serializer = XlsxSerializer<Fuel>.BuildAttributeBased();
 
+                IExcelGateway<Fuel> entities = new XlsxExcelGateway<Fuel>(package, fuelsWorksheet, serializer);
 
-        private static void CreateExcel()
+                if (fuelsWorksheet == null)
+                {
+                    Console.WriteLine("returning....");
+                    return;
+                }
+
+                var fuels = new List<Fuel>
+                {
+                    GenerateFuel(),
+                    GenerateFuel(),
+                    GenerateFuel()
+                };
+
+                entities.AddRange(fuels);
+                entities.SaveChanges();
+            }
+        }
+
+        private static void CreateExcel(out string fileName)
         {
             var fuels = new List<Fuel>
             {
-                new Fuel
-                {
-                    Type = "tp1",
-                    Volume = 5,
-                    Bucket = new Bucket
-                    {
-                        Prop1 = 1, Prop2 = new Name
-                        {
-                            First = "fr1",
-                            CreationDate = DateTime.Now,
-                            Last = "ls1"
-                        }
-                    }
-                },
-                new Fuel
-                {
-                    Type = "tp2",
-                    Volume = 7,
-                    Bucket = new Bucket
-                    {
-                        Prop1 = 2, Prop2 = new Name
-                        {
-                            First = "fr5",
-                            CreationDate = DateTime.Now,
-                            Last = "ls7"
-                        }
-                    }
-                }
+                GenerateFuel(),
+                GenerateFuel(),
+                GenerateFuel()
             };
 
-            string fileName = "Example-CRM-" + DateTime.Now.ToString("yyyy-MM-dd--hh-mm-ss") + ".xlsx";
+            fileName = "Example-CRM-" + DateTime.Now.ToString("yyyy-MM-dd--hh-mm-ss") + ".xlsx";
 
             // Create the file using the FileInfo object
             var file = new FileInfo(fileName);
@@ -216,9 +219,9 @@ namespace ConsoleTests
             }
         }
 
-        private static void OpenExcel()
+        private static void OpenExcel(string fileName)
         {
-            var file = new FileInfo(FileName);
+            var file = new FileInfo(fileName);
             using (var package = new ExcelPackage(file))
             {
                 ExcelWorksheet fuelsWorksheet = package.Workbook.Worksheets[1];
@@ -393,12 +396,32 @@ namespace ConsoleTests
                     {
                         First = "fr" + random.Next(0, 9),
                         CreationDate = DateTime.Now,
-                        Last = "ls" + random.Next(0, 9)
+                        Last = "ls" + random.Next(0, 9),
+                        Gender = GetRandomEnum<Gender>()
                     }
                 }
             };
         }
 
-        private const string FileName = "Example-CRM-2018-10-30--04-43-07.xlsx";
+        private static void CheckEnum()
+        {
+            IConverter converter = new EnumConverter(typeof(Gender));
+            Console.WriteLine(converter.Write(Gender.Male));
+
+            Gender gender = converter.Read("Женский") is Gender
+                ? (Gender) converter.Read("Женский")
+                : Gender.Undefined;
+
+            Console.WriteLine(gender);
+        }
+
+        private static T GetRandomEnum<T>()
+        {
+            Array values = Enum.GetValues(typeof(T));
+            var random = new Random();
+            return (T) values.GetValue(random.Next(values.Length));
+        }
+
+        private const string FileName = "Example-CRM-2018-10-31--01-08-03.xlsx";
     }
 }

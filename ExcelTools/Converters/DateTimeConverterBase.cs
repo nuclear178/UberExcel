@@ -6,14 +6,14 @@ namespace ExcelTools.Converters
     {
         protected string DateTimeFormat { private get; set; }
 
-        public string Write(object val)
+        public string Write(object value)
         {
-            return ((DateTime) val).ToString(DateTimeFormat);
+            return ((DateTime) value).ToString(DateTimeFormat);
         }
 
-        public object Read(string val)
+        public object Read(string value)
         {
-            return DateTime.ParseExact(val, DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(value, DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }
