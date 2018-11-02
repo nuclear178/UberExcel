@@ -49,7 +49,8 @@ namespace ExcelTools.Introspection.Mapping
                 throw ExcelWorksheetMapperException.ColumnIndexAlreadyExists(
                     addedColumn: columnName,
                     columnIndex: columnIndex,
-                    alreadyContainedName: _columns[columnIndex].FullName);
+                    alreadyContainedName: _columns[columnIndex].FullName
+                );
 
             columnName = parentName == null
                 ? columnName
@@ -60,7 +61,7 @@ namespace ExcelTools.Introspection.Mapping
             addedIndex = columnIndex;
         }
 
-        public void IncludeWithOffset(int offset, string includingName, string parentName = null)
+        public void Include(string includingName, string parentName = null, int offset = 0)
         {
             if (parentName == null)
             {
@@ -71,11 +72,6 @@ namespace ExcelTools.Introspection.Mapping
                 _includings.SingleOrDefault(incl => incl.Name.EndsWith(parentName))
                     ?.Complete(includingName, offset);
             }
-        }
-
-        public void Include(string includingName, string parentName = null)
-        {
-            IncludeWithOffset(0, includingName, parentName);
         }
 
         public void AddConverter(int columnIndex, Type converterType) =>

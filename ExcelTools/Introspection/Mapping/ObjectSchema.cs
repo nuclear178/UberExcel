@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+// ReSharper disable RedundantJumpStatement
+
 // ReSharper disable UnusedMember.Global
 
 namespace ExcelTools.Introspection.Mapping
@@ -33,7 +35,7 @@ namespace ExcelTools.Introspection.Mapping
                 if (!info.PropertyType.IsClass) continue;
                 if (info.GetValue(obj, null) == null) continue;
 
-                Console.WriteLine("~~~");
+                // TODO: Finish impl
             }
 
             return instance;

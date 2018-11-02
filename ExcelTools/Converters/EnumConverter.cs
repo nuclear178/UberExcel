@@ -22,9 +22,8 @@ namespace ExcelTools.Converters
                 throw new InvalidOperationException();
 
             FieldInfo field = _enumType.GetField(value.ToString());
-            return field == null
-                ? null
-                : field.GetCustomAttribute<DisplayAttribute>().Name;
+
+            return field?.GetCustomAttribute<DisplayAttribute>()?.Name;
         }
 
         public object Read(string value)

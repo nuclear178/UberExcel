@@ -47,10 +47,10 @@ namespace ExcelTools.Introspection
             GetIncludedColumns(currentType).ForEach(including =>
             {
                 var includingOptions = including.GetCustomAttribute<IncludeAttribute>();
-                Mapping.IncludeWithOffset(
-                    offset: includingOptions.Offset,
+                Mapping.Include(
                     includingName: including.Name,
-                    parentName: parentObj?.Name
+                    parentName: parentObj?.Name,
+                    offset: includingOptions.Offset
                 );
 
                 Traverse(currentType: including.PropertyType, parentObj: including);
