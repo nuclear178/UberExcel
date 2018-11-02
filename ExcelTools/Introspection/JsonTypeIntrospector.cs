@@ -1,35 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExcelTools.Converters;
 using ExcelTools.Introspection.Mapping;
 using ExcelTools.Meta.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ExcelTools.Introspection
 {
-    public class JsonTypeIntrospector : ITypeIntrospector
+    public class JsonTypeIntrospector : TypeIntrospectorBase
     {
-        private readonly ObjectSchemaBuilder _mapping;
         private readonly JToken _mappingJson;
 
-        public JsonTypeIntrospector(Type objType, JToken mappingJson)
+        public JsonTypeIntrospector(Type objType, ITypeConverterFactory converterFactory, JToken mappingJson)
+            : base(objType, converterFactory)
         {
             _mappingJson = mappingJson;
-            _mapping = new ObjectSchemaBuilder(objType);
         }
 
-        public ObjectSchema Analyze()
+        public override ObjectSchema Analyze()
         {
             Traverse(_mappingJson);
 
-            return _mapping.Build();
+            return Mapping.Build();
         }
 
         private void Traverse(JToken currentObj, string parentName = null)
         {
             GetColumns(currentObj).ForEach(column =>
             {
-                _mapping.AddColumn(
+                Mapping.AddColumn(
                     columnIndex: column[JsonPropertiesTokens.ColumnIndex].ToObject<int>(),
                     columnName: column[JsonPropertiesTokens.PropertyName].ToString(),
                     addedIndex: out int _,
@@ -38,7 +38,7 @@ namespace ExcelTools.Introspection
 
                 if (column[JsonPropertiesTokens.ConverterClass] != null)
                 {
-                    _mapping.AddConverter(
+                    Mapping.AddConverter(
                         columnIndex: column[JsonPropertiesTokens.ColumnIndex].ToObject<int>(),
                         converterType: Type.GetType(column[JsonPropertiesTokens.ConverterClass].ToString())
                     );
@@ -47,7 +47,7 @@ namespace ExcelTools.Introspection
 
             GetIncludedColumns(currentObj).ForEach(including =>
             {
-                _mapping.Include(
+                Mapping.Include(
                     includingName: including[JsonPropertiesTokens.PropertyName].ToString(),
                     parentName: parentName
                 );

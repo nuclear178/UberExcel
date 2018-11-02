@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExcelTools.Converters;
-using ExcelTools.Converters.Mappers;
 
 namespace ExcelTools.Introspection.Mapping
 {
@@ -11,17 +10,13 @@ namespace ExcelTools.Introspection.Mapping
         public int Index { get; }
 
         private readonly string _fullName;
-        private readonly Type _propType;
+        private readonly IConverter _converter;
 
-        private IConverter Converter { get; set; }
-        private bool HasCustomConverter => Converter != null;
-
-        public ColumnOptions(int index, string fullName, Type propType, Type converterType)
+        public ColumnOptions(int index, string fullName, IConverter converter)
         {
             Index = index;
             _fullName = fullName;
-            _propType = propType;
-            InitializeCustomConverter(converterType);
+            _converter = converter;
         }
 
         public object GetValue(object obj)
@@ -65,33 +60,14 @@ namespace ExcelTools.Introspection.Mapping
                 .SetValue(obj, value, null);
         }
 
-        public object MapFrom(object rawValue, IValueMapper mapper)
+        public object MapFrom(object rawValue)
         {
-            return HasCustomConverter
-                ? Converter.Read(rawValue.ToString())
-                : mapper.MapValue(_propType, rawValue);
+            return _converter.Read(rawValue.ToString());
         }
 
         public object MapTo(object rawValue)
         {
-            return HasCustomConverter
-                ? Converter.Write(rawValue)
-                : rawValue;
-        }
-
-        private void InitializeCustomConverter(Type converterType)
-        {
-            if (_propType.IsEnum)
-            {
-                Converter = new EnumConverter(_propType);
-            }
-            else
-            {
-                if (converterType == null)
-                    return;
-
-                Converter = (IConverter) Activator.CreateInstance(converterType);
-            }
+            return _converter.Write(rawValue);
         }
     }
 }

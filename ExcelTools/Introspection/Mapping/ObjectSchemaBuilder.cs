@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExcelTools.Converters;
 using ExcelTools.Exceptions;
 
 namespace ExcelTools.Introspection.Mapping
@@ -10,10 +11,12 @@ namespace ExcelTools.Introspection.Mapping
         private readonly Type _objType;
         private readonly Dictionary<int, Column> _columns;
         private readonly List<Including> _includings;
+        private readonly ITypeConverterFactory _converterFactory;
 
-        public ObjectSchemaBuilder(Type objType)
+        public ObjectSchemaBuilder(Type objType, ITypeConverterFactory converterFactory)
         {
             _objType = objType;
+            _converterFactory = converterFactory;
             _columns = new Dictionary<int, Column>();
             _includings = new List<Including>();
         }
@@ -24,8 +27,11 @@ namespace ExcelTools.Introspection.Mapping
                 _columns.Values.Select(column => new ColumnOptions(
                     column.Index,
                     column.FullName,
-                    column.DeduceType(_objType),
-                    column.ConverterType)),
+                    _converterFactory.Create(
+                        column.DeduceType(_objType),
+                        column.ConverterType
+                    )
+                )),
                 _objType
             );
         }

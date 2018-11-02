@@ -2,27 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExcelTools.Converters;
 using ExcelTools.Introspection.Mapping;
 using ExcelTools.Meta.Attributes;
 
 namespace ExcelTools.Introspection
 {
-    public class AttributeTypeIntrospector : ITypeIntrospector
+    public class AttributeTypeIntrospector : TypeIntrospectorBase
     {
-        private readonly Type _objType;
-        private readonly ObjectSchemaBuilder _mapping;
-
-        public AttributeTypeIntrospector(Type objType)
+        public AttributeTypeIntrospector(Type objType, ITypeConverterFactory converterFactory)
+            : base(objType, converterFactory)
         {
-            _objType = objType;
-            _mapping = new ObjectSchemaBuilder(objType);
         }
 
-        public ObjectSchema Analyze()
+        public override ObjectSchema Analyze()
         {
-            Traverse(_objType);
+            Traverse(ObjType);
 
-            return _mapping.Build();
+            return Mapping.Build();
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
@@ -31,7 +28,7 @@ namespace ExcelTools.Introspection
             GetColumns(currentType).ForEach(column =>
             {
                 var columnOptions = column.GetCustomAttribute<ColumnAttribute>();
-                _mapping.AddColumn(
+                Mapping.AddColumn(
                     columnIndex: columnOptions.ColumnIndex,
                     columnName: column.Name,
                     addedIndex: out int addedIndex,
@@ -41,7 +38,7 @@ namespace ExcelTools.Introspection
                 if (!Attribute.IsDefined(column, typeof(ConverterAttribute))) return;
 
                 var converterOptions = column.GetCustomAttribute<ConverterAttribute>();
-                _mapping.AddConverter(
+                Mapping.AddConverter(
                     columnIndex: addedIndex,
                     converterType: converterOptions.ConverterType
                 );
@@ -50,7 +47,7 @@ namespace ExcelTools.Introspection
             GetIncludedColumns(currentType).ForEach(including =>
             {
                 var includingOptions = including.GetCustomAttribute<IncludeAttribute>();
-                _mapping.IncludeWithOffset(
+                Mapping.IncludeWithOffset(
                     offset: includingOptions.Offset,
                     includingName: including.Name,
                     parentName: parentObj?.Name

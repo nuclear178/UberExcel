@@ -1,4 +1,3 @@
-using ExcelTools.Converters.Mappers;
 using ExcelTools.Introspection.Mapping;
 using OfficeOpenXml;
 
@@ -7,12 +6,10 @@ namespace ExcelTools.IO.Xlsx
     public class XlsxObjectWriter<T> where T : new()
     {
         private readonly ObjectSchema _schema;
-        private readonly IValueMapper _mapper;
 
-        public XlsxObjectWriter(ObjectSchema schema, IValueMapper mapper)
+        public XlsxObjectWriter(ObjectSchema schema)
         {
             _schema = schema;
-            _mapper = mapper;
         }
 
         public T Build(ExcelRange cells, int rowIndex)
@@ -21,7 +18,7 @@ namespace ExcelTools.IO.Xlsx
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = cells[rowIndex, column.Index].Value;
-                column.SetValue(createdObj, column.MapFrom(rawValue, _mapper));
+                column.SetValue(createdObj, column.MapFrom(rawValue));
             }
 
             return createdObj;

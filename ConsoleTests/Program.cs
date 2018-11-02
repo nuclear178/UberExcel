@@ -322,7 +322,11 @@ namespace ConsoleTests
 
             //WorksheetConvert<Fuel>.BuildJsonBased((JObject) mappingJson["data"]);
 
-            var introspector = new JsonTypeIntrospector(typeof(Fuel), (JObject) mappingJson["data"]);
+            var introspector = new JsonTypeIntrospector(
+                objType: typeof(Fuel),
+                converterFactory: new TypeConverterFactory(),
+                mappingJson: (JObject) mappingJson["data"]
+            );
             ObjectSchema mapping = introspector.Analyze();
 
             Console.WriteLine(mapping);
