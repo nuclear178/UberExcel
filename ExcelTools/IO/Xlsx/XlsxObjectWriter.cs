@@ -18,7 +18,7 @@ namespace ExcelTools.IO.Xlsx
             foreach (ColumnOptions column in _schema)
             {
                 object rawValue = cells[rowIndex, column.Index].Value;
-                column.SetValue(createdObj, column.MapFrom(rawValue));
+                column.SetValue(createdObj, rawValue);
             }
 
             return createdObj;

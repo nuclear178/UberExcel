@@ -32,7 +32,7 @@ namespace ExcelTools.Introspection.Mapping
                 obj = property.GetValue(obj, null);
             }
 
-            return obj;
+            return _converter.Write(obj);
         }
 
         public void SetValue(object obj, object value)
@@ -55,19 +55,8 @@ namespace ExcelTools.Introspection.Mapping
                 obj = propObj;
             }
 
-            obj.GetType()
-                .GetProperty(parts.Last())
-                .SetValue(obj, value, null);
-        }
-
-        public object MapFrom(object rawValue)
-        {
-            return _converter.Read(rawValue.ToString());
-        }
-
-        public object MapTo(object rawValue)
-        {
-            return _converter.Write(rawValue);
+            obj.GetType().GetProperty(parts.Last())
+                .SetValue(obj, _converter.Read(value.ToString()), null);
         }
     }
 }
