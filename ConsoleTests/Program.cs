@@ -15,6 +15,12 @@ namespace ConsoleTests
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     internal static class Program
     {
+        private static void TestValue()
+        {
+            var obj = new ValueObject("::name", 15);
+            Console.WriteLine($"Name is {obj.Name} and {obj.Number}");
+        }
+
         private static void Main()
         {
             /*var fuels = new List<Fuel>
